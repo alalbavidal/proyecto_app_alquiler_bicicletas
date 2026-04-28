@@ -1,0 +1,20 @@
+# Node
+node_modules/
+
+# Angular / build
+dist/
+.angular/
+
+# Java / Spring Boot
+target/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
