@@ -1,0 +1,177 @@
+<div class="card">
+  <div class="card__header">
+    <h2>Reservas</h2>
+  </div>
+
+  <div class="card__body">
+
+    <!-- FILTROS -->
+    <div class="filters mb-4 flex gap-2 flex-wrap">
+      <input type="text" [(ngModel)]="q" placeholder="Buscar por nombre o teléfono" class="input">
+
+      <select [(ngModel)]="estado" class="input">
+        <option value="">Todos los estados</option>
+        <option value="CONFIRMADA">Confirmada</option>
+        <option value="CANCELADA">Cancelada</option>
+        <option value="PENDIENTE">Pendiente</option>
+      </select>
+
+      <select [(ngModel)]="pagado" class="input">
+        <option [ngValue]="null">Todos</option>
+        <option [ngValue]="true">Pagado</option>
+        <option [ngValue]="false">No pagado</option>
+      </select>
+
+      <input type="date" [(ngModel)]="fechaInicio" class="input" placeholder="Fecha inicio">
+      <input type="date" [(ngModel)]="fechaFin" class="input" placeholder="Fecha fin">
+
+      <button class="btn btn--primary" (click)="aplicarFiltros()">Filtrar</button>
+      <button class="btn btn--secondary" (click)="limpiarFiltros()">Limpiar filtros</button>
+    </div>
+
+    <div *ngIf="loading">Cargando…</div>
+    <div *ngIf="error" class="alert alert--error">{{ error }}</div>
+
+    <!-- TABLA -->
+    <table class="ui-table" *ngIf="!loading && reservas.length">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Tlf</th>
+        <th>Inicio</th>
+        <th>Fin</th>
+        <th>Total (€)</th>
+        <th>Estado</th>
+        <th>Pagado</th>
+        <th>Tipo</th>
+        <th>Contrato</th>
+        <th>Obs</th>
+        <th>Extras</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let r of reservas; trackBy: trackByReserva">
+        <td>{{ r.id }}</td>
+        <td>{{ r.clienteNombre || '—' }} {{ r.clienteApellido || '—' }}</td>
+        <td>{{ r.clienteTelefono || '—' }}</td>
+        <td>{{ r.fechaInicio | date: 'short' }}</td>
+        <td>{{ r.fechaFin | date: 'short' }}</td>
+        <td>{{ ((r.precioTotal || 0)) | currency:'EUR':'symbol' }}</td>
+        <td><span class="badge" [ngClass]="{'badge--green': r.estado === 'CONFIRMADA'}">{{ r.estado }}</span></td>
+        <td>
+          <button class="btn btn--ghost" (click)="pagada(r)">
+            <i [ngClass]="r.pagado ? 'bi bi-check-circle text-green-600' : 'bi bi-x-circle text-red-600'"></i>
+          </button>
+        </td>
+        <td>
+          <select [(ngModel)]="r.tipoCobro" (change)="tipoCobro(r.id, r.tipoCobro)" class="input">
+            <option value="EFECTIVO">Efectivo</option>
+            <option value="TPV">TPV</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+          </select>
+        </td>
+        <td>
+          <button class="btn btn--ghost" (click)="verContrato(r.contratoUrl)" [disabled]="!r.contratoUrl">Abrir</button>
+        </td>
+        <td>
+          <button
+            class="btn btn--ghost"
+            (click)="abrirObservaciones(r)"
+            title="Observaciones"
+            [ngClass]="{ 'text-yellow-500': r.observaciones,  'text-gray-400': !r.observaciones }">
+            <i class="bi bi-eye"></i>
+          </button>
+        </td>
+        <td class="text-right">
+          <button
+            class="btn btn--ghost"
+            title="Extras"
+            (click)="abrirDialogoExtras(r)"
+            [ngStyle]="{ color: r.tieneExtras ? 'red' : 'gray' }">
+            <i class="bi bi-search"></i>
+          </button>
+        </td>
+
+
+        <td class="tbl-actions">
+          <button class="btn btn--warn"
+                  (click)="cancelar(r)"
+                  [disabled]="r.estado === 'CANCELADA'"
+                  title="Cancelar">
+            <i class="bi bi-x-circle"></i>
+          </button>
+          <button class="btn btn--warn"
+                  (click)="eliminar(r)"
+                  title="Eliminar">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && !reservas.length" class="muted">No hay reservas.</div>
+
+    <!-- PAGINACIÓN -->
+    <div *ngIf="totalElements > size" class="pagination mt-4 flex gap-2 items-center">
+      <button class="btn" [disabled]="page === 0" (click)="cambiarPagina(page - 1)">Anterior</button>
+      <span>Página {{ page + 1 }} de {{ Math.ceil(totalElements / size) }}</span>
+      <button class="btn" [disabled]="page >= Math.ceil(totalElements / size) - 1" (click)="cambiarPagina(page + 1)">Siguiente</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE OBSERVACIONES -->
+<div *ngIf="dialogAbierto" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white p-6 rounded-lg w-96">
+    <h3 class="text-lg font-bold mb-2">Observaciones</h3>
+    <textarea [(ngModel)]="observaciones" rows="5" class="w-full border rounded p-2"></textarea>
+    <div class="mt-4 flex justify-end gap-2">
+      <button class="btn btn--secondary" (click)="cerrarDialog()">Cancelar</button>
+      <button class="btn btn--primary" (click)="guardarObservaciones()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE EXTRAS -->
+<div *ngIf="dialogExtrasAbierto" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white p-6 rounded-lg w-96 max-h-[80vh] overflow-auto">
+    <h3 class="text-lg font-bold mb-2">Seleccionar Extras para la reserva #{{reservaSeleccionada?.id}}</h3>
+
+    <table class="w-full mb-4">
+      <thead>
+      <tr>
+        <th>Extra</th>
+        <th>Precio (€)</th>
+        <th>Cantidad</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let e of extrasDisponibles">
+        <td>{{ e.nombre }}</td>
+        <td>{{ e.precio | currency:'EUR':'symbol' }}</td>
+        <td>
+          <input type="number"
+                 min="0"
+                 [ngModel]="getCantidad(e)"
+                 (ngModelChange)="seleccionarExtra(e, $event)"
+                 class="input w-20">
+        </td>
+      </tr>
+
+      </tbody>
+    </table>
+
+    <p class="font-bold">Total extras: {{ reservaExtrasTotales | currency:'EUR':'symbol' }}</p>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button class="btn btn--secondary" (click)="dialogExtrasAbierto = false">Cancelar</button>
+      <button class="btn btn--primary" (click)="guardarExtras()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+

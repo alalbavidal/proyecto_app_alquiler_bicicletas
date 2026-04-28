@@ -1,0 +1,452 @@
+.calendar-container {
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #4a5568;
+}
+
+.calendar-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 193, 7, 0.02) 100%);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+/* Header del calendario */
+.calendar-header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.calendar-title {
+  color: #ffc107;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-icon {
+  font-size: 1.6rem;
+  color: #ffc107;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Nueva navegación de mes */
+.month-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-arrow {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: white;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.nav-arrow:hover {
+  background: #ffc107;
+  color: #000;
+  border-color: #ffc107;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+}
+
+.nav-arrow:active {
+  transform: translateY(0);
+}
+
+.month-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.month-name {
+  color: #212529;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.year-name {
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Wrapper del datepicker */
+.datepicker-wrapper {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Estilos globales del datepicker */
+::ng-deep .custom-datepicker {
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Ocultar la navegación predeterminada del datepicker */
+::ng-deep .custom-datepicker .ngb-dp-header {
+  display: none !important;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-content {
+  padding: 0;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-month {
+  pointer-events: none;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-weekdays {
+  border-bottom: 2px solid #f8f9fa;
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 8px 0;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-weekday {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding: 4px;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-week {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+/* Contenedor de días para evitar superposición */
+::ng-deep .custom-datepicker ngb-datepicker-month {
+  display: block;
+  width: 100%;
+}
+
+/* Días personalizados */
+.custom-day {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  font-weight: 500;
+  margin: 1px;
+  background: transparent;
+  color: #495057;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+}
+
+.custom-day:hover:not(.is-disabled) {
+  background: #fff3cd;
+  border-color: #ffc107;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+}
+
+.custom-day.is-selected {
+  background: #ffc107;
+  color: #000;
+  font-weight: 600;
+  border-color: #ffb300;
+  box-shadow: 0 3px 12px rgba(255, 193, 7, 0.3);
+  transform: translateY(-1px);
+}
+
+.custom-day.is-today:not(.is-selected) {
+  background: #e9ecef;
+  color: #495057;
+  font-weight: 600;
+  border-color: #adb5bd;
+}
+
+.custom-day.is-focused:not(.is-disabled) {
+  outline: 2px solid #ffc107;
+  outline-offset: 1px;
+}
+
+.custom-day.is-disabled {
+  background: #6c757d;
+  color: white;
+  cursor: not-allowed;
+  position: relative;
+  font-weight: 500;
+  border-color: #6c757d;
+}
+
+.custom-day.is-disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.8);
+  transform: translateY(-50%);
+}
+
+.custom-day.is-outside {
+  color: #adb5bd;
+  background: transparent;
+  font-weight: 400;
+}
+
+.custom-day.is-outside:hover {
+  background: #f8f9fa;
+  color: #6c757d;
+}
+
+.day-number {
+  position: relative;
+  z-index: 2;
+  line-height: 1;
+}
+
+.day-indicator {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  z-index: 3;
+}
+
+/* Sección de tarifas */
+.tarifa-section {
+  position: relative;
+  z-index: 1;
+}
+
+.tarifa-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffc107;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.price-icon {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.tarifa-select {
+  width: 100%;
+  padding: 14px 40px 14px 14px;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #495057;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tarifa-select:focus {
+  outline: none;
+  border-color: #ffc107;
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+}
+
+.tarifa-select:hover {
+  border-color: #ffc107;
+}
+
+.tarifa-select option {
+  padding: 10px;
+  background: white;
+  color: #495057;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+.tarifa-select:focus + .select-arrow {
+  transform: translateY(-50%) rotate(180deg);
+  color: #ffc107;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.calendar-container {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.month-navigation {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .calendar-container {
+    max-width: 100%;
+    margin: 16px;
+    padding: 20px;
+  }
+
+  .calendar-title {
+    font-size: 1.2rem;
+  }
+
+  .month-name {
+    font-size: 1.1rem;
+  }
+
+  .nav-arrow {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+  .custom-day {
+    width: 38px;
+    height: 38px;
+    font-size: 0.9rem;
+  }
+
+  .month-navigation {
+    padding: 12px 16px;
+  }
+
+  .datepicker-wrapper {
+    padding: 16px;
+  }
+}
+
+/* Centrado perfecto */
+.calendar-container {
+  display: block;
+  box-sizing: border-box;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-months {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-month {
+  width: 100%;
+  max-width: none;
+}
+
+/* Espaciado uniforme para los días */
+::ng-deep .custom-datepicker .ngb-dp-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+::ng-deep .custom-datepicker .ngb-dp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+/* Eliminar márgenes y paddings que causan descentrado */
+::ng-deep .custom-datepicker .ngb-dp-months,
+::ng-deep .custom-datepicker .ngb-dp-month,
+::ng-deep .custom-datepicker .ngb-dp-week {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}

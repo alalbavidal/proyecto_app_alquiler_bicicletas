@@ -1,0 +1,76 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <h2 class="calendar-title">
+      <i class="calendar-icon bi bi-calendar3"></i>
+      Selecciona una fecha
+    </h2>
+  </div>
+
+  <!-- Nueva cabecera de navegación con mes y flechas -->
+  <div class="month-navigation">
+    <button
+      class="nav-arrow nav-arrow-left"
+      (click)="mesAnterior()"
+      type="button">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <div class="month-display">
+      <span class="month-name">{{ nombreMesActual }}</span>
+      <span class="year-name">{{ anioActual }}</span>
+    </div>
+
+    <button
+      class="nav-arrow nav-arrow-right"
+      (click)="mesSiguiente()"
+      type="button">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+
+  <div class="datepicker-wrapper">
+    <ngb-datepicker
+      [startDate]="fechaMostrada"
+      [markDisabled]="esDiaDeshabilitado"
+      (dateSelect)="onFechaSeleccionada($event)"
+      [dayTemplate]="customDay"
+      [displayMonths]="1"
+      navigation="none"
+      outsideDays="visible"
+      class="custom-datepicker"
+      id="datepicker">
+    </ngb-datepicker>
+
+    <ng-template #customDay let-date let-currentMonth="currentMonth" let-selected="selected" let-focused="focused">
+      <div class="custom-day"
+           [class.is-selected]="selected"
+           [class.is-focused]="focused"
+           [class.is-disabled]="esFechaRoja(date) || isSunday(date)"
+           [class.is-outside]="date.month !== currentMonth"
+           [class.is-today]="isToday(date)">
+        <span class="day-number">{{ date.day }}</span>
+        <div class="day-indicator" *ngIf="esFechaRoja(date) || isSunday(date)"></div>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="tarifa-section" *ngIf="tarifasDisponibles.length > 0">
+    <label for="tarifa" class="tarifa-label">
+      <i class="price-icon">💰</i>
+      Selecciona una tarifa
+    </label>
+    <div class="select-wrapper">
+      <select id="tarifa" class="tarifa-select" [(ngModel)]="tarifaSeleccionadaId">
+        <option value="" disabled>Elige una opción...</option>
+        <option *ngFor="let tarifa of tarifasDisponibles" [value]="tarifa.id">
+          {{ tarifa.nombre }} - {{ tarifa.precio }}€
+        </option>
+      </select>
+      <div class="select-arrow">
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="card">
+  <div class="card__header">
+    <h2>Accesorios</h2>
+    <div class="actions">
+      <button class="btn" (click)="toggleFiltroActivos()">
+        {{ mostrarSoloActivos ? 'Ver todos' : 'Solo activos' }}
+      </button>
+      <button class="btn btn--primary" (click)="crear()">Nuevo accesorio</button>
+    </div>
+  </div>
+
+  <div class="card__body">
+    <div *ngIf="loading">Cargando…</div>
+    <div *ngIf="error" class="alert alert--error">{{ error }}</div>
+
+    <table class="ui-table" *ngIf="!loading && accesorios.length">
+      <thead>
+      <tr>
+        <th class="col-name">Nombre</th>
+        <th class="col-price">Precio/día</th>
+        <th class="col-stock">Stock</th>
+        <th class="col-state">Estado</th>
+        <th class="col-actions">Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngFor="let a of accesorios">
+        <td class="col-name">
+          <div class="tbl-title">{{ a.nombre }}</div>
+          <div class="tbl-sub" *ngIf="a.descripcion">{{ a.descripcion }}</div>
+        </td>
+
+        <td class="col-price">
+          {{ a.precioDia | currency:'EUR':'symbol':'1.2-2' }}
+        </td>
+
+        <td class="col-stock">
+          {{ a.stock }}
+        </td>
+
+        <td class="col-state">
+            <span class="badge" [class.badge--success]="a.activo" [class.badge--muted]="!a.activo">
+              {{ a.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+        </td>
+
+        <td class="col-actions">
+          <div class="tbl-actions">
+            <button class="btn btn--ghost" (click)="editar(a)">Editar</button>
+            <button *ngIf="a.activo" class="btn btn--warn" (click)="desactivar(a)">Desactivar</button>
+            <button *ngIf="!a.activo" class="btn btn--success" (click)="restaurar(a)">Restaurar</button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && !accesorios.length" class="muted">
+      No hay accesorios que mostrar.
+    </div>
+  </div>
+</div>

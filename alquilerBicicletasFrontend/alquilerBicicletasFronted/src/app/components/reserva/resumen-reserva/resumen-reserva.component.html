@@ -1,0 +1,54 @@
+<div class="ui-card">
+  <h3 class="ui-label">
+    <i class="bi bi-receipt"></i>
+    Resumen de tu reserva
+  </h3>
+
+  <div class="ui-section">
+    <p><strong>Fecha:</strong> {{ fecha | date:'fullDate' }}</p>
+    <p><strong>Tarifa:</strong> {{ tarifa?.nombre }} - {{ tarifa?.precio | currency:'EUR':'symbol' }}</p>
+  </div>
+
+  <div class="ui-section">
+    <h4 class="ui-label">
+      <i class="bi bi-bicycle"></i>
+      Bicicletas seleccionadas
+    </h4>
+    <ul class="ui-list">
+      <li class="ui-list-item" *ngFor="let bici of bicicletas">
+        <div>
+          <div class="font-medium">{{ bici.modelo }} {{ bici.numero }}</div>
+          <small class="text-gray-600">{{ bici.tipo }}</small>
+        </div>
+        <span class="font-semibold">{{ bici.precioDia | currency:'EUR':'symbol' }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="ui-section" *ngIf="accesorios.length > 0">
+    <h4 class="ui-label">
+      <i class="bi bi-box-seam"></i>
+      Accesorios seleccionados
+    </h4>
+    <ul class="ui-list">
+      <li class="ui-list-item" *ngFor="let acc of accesorios">
+        <span class="font-medium">{{ acc.cantidadSeleccionada }} - {{ acc.nombre }}</span>
+<span class="font-semibold">{{ acc.cantidadSeleccionada * acc.precio | currency:'EUR':'symbol' }}</span>      </li>
+    </ul>
+  </div>
+
+  <div class="ui-section" style="margin-top: var(--ui-space-4);">
+    <p class="font-semibold">Total: {{ total | currency:'EUR':'symbol' }}</p>
+  </div>
+
+  <div class="ui-section" style="margin-top: var(--ui-space-3);">
+    <button
+      class="ui-btn ui-btn--primary"
+      (click)="onConfirmar()"
+      [disabled]="bicicletas.length === 0 || !fecha || !tarifa"
+    >
+      <i class="bi bi-check2-circle"></i>
+      Confirmar Reserva
+    </button>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="ui-card">
+  <h4 class="ui-label"><i class="bi bi-box-seam"></i> Selecciona accesorios</h4>
+  <p class="text-gray-600" style="margin: 4px 0 var(--ui-space-2);">
+    El máximo por accesorio depende del nº de bicis y la disponibilidad.
+  </p>
+
+  <ul class="ui-list">
+    <li *ngFor="let acc of accesorios" class="ui-list-item">
+      <div>
+        <span class="font-medium">{{ acc.nombre }}</span>
+        <span class="ml-2">{{ acc.precio | currency:'EUR' }}</span>
+        <small class="block text-gray-500">máx. {{ getMax(acc) }}</small>
+      </div>
+
+      <input type="number"
+             class="ui-number"
+             style="width: 72px; text-align: center;"
+             [min]="0"
+             [max]="getMax(acc)"
+             [value]="cantidades[acc.id] || 0"
+             (input)="onCantidadChange(acc, $any($event.target).valueAsNumber)"
+             [disabled]="getMax(acc) === 0" />
+    </li>
+  </ul>
+</div>

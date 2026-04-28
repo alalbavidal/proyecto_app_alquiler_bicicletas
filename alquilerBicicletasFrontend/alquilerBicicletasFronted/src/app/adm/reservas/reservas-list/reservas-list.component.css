@@ -1,0 +1,25 @@
+/* src/app/adm/reservas/reservas-list/reservas-list.component.css */
+.filters {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr auto auto;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.ui-table { width: 100%; border-collapse: collapse; }
+.ui-table th, .ui-table td { padding: 8px 10px; border-bottom: 1px solid #eee; text-align: left; }
+.badge { background: #f1f5f9; padding: 4px 8px; border-radius: 6px; font-size: 12px; }
+.tbl-actions { display: flex; gap: 6px; }
+.pagination { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+.badge--green {
+  color: white;
+  background-color: green;
+
+  .text-green-600 {
+    color: #16a34a;
+  }
+
+  .text-red-600 {
+    color: #dc2626;
+  }
+
+}

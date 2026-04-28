@@ -1,0 +1,123 @@
+<div class="ui-card">
+  <h3 class="ui-label">
+    <i class="bi bi-person-badge"></i>
+    Datos del Cliente
+  </h3>
+
+  <form (ngSubmit)="onSubmit()" #clienteForm="ngForm" novalidate>
+    <!-- Nombre -->
+    <div class="ui-section">
+      <label class="block" for="nombre">Nombre *</label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        [(ngModel)]="cliente.nombre"
+        required
+        class="ui-input"
+      />
+    </div>
+
+    <!-- Apellido -->
+    <div class="ui-section">
+      <label class="block" for="apellido">Apellido *</label>
+      <input
+        id="apellido"
+        name="apellido"
+        type="text"
+        [(ngModel)]="cliente.apellido"
+        required
+        class="ui-input"
+      />
+    </div>
+
+    <!-- Email -->
+    <div class="ui-section">
+      <label class="block" for="email">Email *</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="cliente.email"
+        required
+        email
+        class="ui-input"
+      />
+    </div>
+
+    <!-- Fecha de Nacimiento -->
+    <div class="ui-section">
+      <label class="block" for="fechaNacimiento">Fecha de Nacimiento *</label>
+      <input
+        id="fechaNacimiento"
+        name="fechaNacimiento"
+        type="date"
+        [(ngModel)]="cliente.fechaNacimiento"
+        required
+        class="ui-input"
+      />
+    </div>
+
+    <!-- Teléfono -->
+    <div class="ui-section">
+      <label class="block" for="telefono">Teléfono</label>
+      <input
+        id="telefono"
+        name="telefono"
+        type="tel"
+        [(ngModel)]="cliente.telefono"
+        class="ui-input"
+      />
+    </div>
+
+    <!-- Tipo de documento -->
+    <div class="mb-3">
+      <label class="block mb-1" for="tipoDocumento">Tipo de documento *</label>
+      <select id="tipoDocumento" name="tipoDocumento" [(ngModel)]="cliente.tipoDocumento" required class="w-full p-2 border rounded">
+        <option [ngValue]="'DNI'">DNI</option>
+        <option [ngValue]="'NIE'">NIE</option>
+        <option [ngValue]="'PASAPORTE'">Pasaporte</option>
+        <option [ngValue]="'OTRO'">Otro</option>
+      </select>
+    </div>
+
+    <!-- Número de documento -->
+    <!-- Nº documento (requerido) -->
+    <label for="documentoIdentidad">Número de documento *</label>
+    <input id="documentoIdentidad" name="documentoIdentidad" type="text"
+           [(ngModel)]="cliente.documentoIdentidad" required
+           class="w-full p-2 border rounded" />
+    <small *ngIf="cliente.documentoIdentidad && !isDocumentoValido()" class="text-red-600">
+      Formato de documento no válido para {{ cliente.tipoDocumento }}.
+    </small>
+
+    <!-- Subir foto del documento -->
+    <div class="mb-3">
+      <label class="block mb-2">Documento (imagen)</label>
+      <input
+        type="file"
+        accept=".jpg,.jpeg,.png,.webp"
+        (change)="onFileSelected($event)"
+      />
+      <small *ngIf="uploading">Subiendo…</small>
+      <small class="text-red-600" *ngIf="uploadError">{{ uploadError }}</small>
+
+      <div *ngIf="previewUrl" class="mt-2">
+        <img [src]="previewUrl" alt="Preview documento" style="max-width: 240px; border-radius: 8px;" />
+      </div>
+
+    </div>
+
+
+    <div class="ui-section" style="margin-top: var(--ui-space-4);">
+      <button
+        type="submit"
+        class="ui-btn ui-btn--primary"
+        [disabled]="clienteForm.invalid || !isDocumentoValido()"
+      >
+        <i class="bi bi-check2-circle"></i>
+        Confirmar Datos
+      </button>
+    </div>
+  </form>
+</div>

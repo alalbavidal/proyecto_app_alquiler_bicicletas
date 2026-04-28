@@ -1,0 +1,80 @@
+<div class="card">
+  <div class="card__header">
+    <h2>{{ id ? 'Editar bicicleta' : 'Nueva bicicleta' }}</h2>
+  </div>
+
+  <div class="card__body">
+    <div *ngIf="loading">Cargando…</div>
+    <div *ngIf="error" class="alert alert--error">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+      <div class="grid">
+        <label>
+          <span>Modelo *</span>
+          <input formControlName="modelo" type="text" />
+        </label>
+
+        <label>
+          <span>Número *</span>
+          <input formControlName="numero" type="text" />
+        </label>
+
+        <label>
+          <span>Bastidor</span>
+          <input formControlName="bastidor" type="text" />
+        </label>
+
+        <label>
+          <span>Candado</span>
+          <input formControlName="candado" type="text" />
+        </label>
+
+        <label>
+          <span>Clave candado</span>
+          <input formControlName="claveCandado" type="text" />
+        </label>
+
+        <label>
+          <span>Estado *</span>
+          <select formControlName="estado">
+            <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+          </select>
+        </label>
+
+
+
+
+
+        <!-- Imagen: subida + preview -->
+        <label class="col-span-2">
+          <span>Imagen de la bicicleta</span>
+          <input type="file" accept=".jpg,.jpeg,.png,.webp" (change)="onPickFile($event)" />
+          <small *ngIf="uploading">Subiendo imagen…</small>
+          <small class="text-red-600" *ngIf="uploadError">{{ uploadError }}</small>
+
+          <div *ngIf="previewSrc" class="mt-2">
+            <img [src]="previewSrc" alt="Preview" style="max-width: 280px; border-radius: 8px;" />
+            <button type="button" class="btn" (click)="limpiarImagen()">Quitar imagen</button>
+          </div>
+        </label>
+
+        <label class="col-span-2">
+          <span>Descripción</span>
+          <textarea formControlName="descripcion" rows="3"></textarea>
+        </label>
+
+        <label class="col-span-2">
+          <span>Observaciones</span>
+          <textarea formControlName="observaciones" rows="3"></textarea>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" (click)="cancelar()">Cancelar</button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving || uploading">
+          {{ saving ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

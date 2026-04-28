@@ -1,0 +1,43 @@
+<!-- Backdrop -->
+<div
+  *ngIf="visible() && backdrop"
+  class="ui-toast-backdrop"
+  (click)="close()"
+></div>
+
+<!-- Caja del toast -->
+<div
+  *ngIf="visible()"
+  class="ui-toast"
+  [class.ui-toast--center]="centered"
+  [class.ui-toast--top-right]="!centered"
+  role="alertdialog"
+  aria-live="polite"
+  aria-modal="true"
+  [attr.data-type]="type"
+>
+  <div class="ui-toast__icon">
+    <i class="bi" [ngClass]="iconClass()"></i>
+  </div>
+
+  <div class="ui-toast__content">
+    <strong *ngIf="title" class="ui-toast__title">{{ title }}</strong>
+    <div class="ui-toast__message">{{ message }}</div>
+
+    <button
+      *ngIf="actionLabel"
+      type="button"
+      class="ui-btn ui-btn--primary ui-toast__action"
+      (click)="onActionClick()"
+    >
+      {{ actionLabel }}
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="ui-toast__close"
+    aria-label="Cerrar"
+    (click)="close()"
+  >×</button>
+</div>

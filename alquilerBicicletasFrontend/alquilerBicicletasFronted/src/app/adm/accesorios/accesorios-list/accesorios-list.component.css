@@ -1,0 +1,64 @@
+.ui-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.ui-table th,
+.ui-table td {
+  padding: 12px 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--ui-border, #e5e7eb);
+  text-align: left;
+}
+
+/* Columnas */
+.col-name { width: auto; }
+.col-price { width: 140px; text-align: right; }
+.col-stock { width: 110px; text-align: right; }
+.col-state { width: 120px; text-align: center; }
+.col-actions { width: 240px; }
+
+.tbl-title { font-weight: 600; }
+.tbl-sub { color: #6b7280; font-size: 0.9rem; margin-top: 2px; }
+
+.tbl-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  line-height: 1;
+  background: #e5e7eb;
+  color: #111827;
+}
+.badge--success { background: #dcfce7; color: #065f46; }
+.badge--muted   { background: #f3f4f6; color: #6b7280; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .col-actions { width: 100%; }
+  .tbl-actions { justify-content: flex-start; }
+}
+
+
+.card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04); }
+.card__header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #eef2f7; }
+.card__body { padding:16px; }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { padding:10px; border-bottom:1px solid #f1f5f9; text-align:left; }
+.badge { background:#eef2ff; color:#312e81; padding:2px 8px; border-radius:999px; font-size:.85rem; }
+.actions { display:flex; gap:8px; justify-content:flex-end; }
+.btn { border:1px solid #e5e7eb; background:#fff; padding:6px 10px; border-radius:8px; cursor:pointer; }
+.btn--primary { background:#0ea5e9; border-color:#0ea5e9; color:#fff; }
+.btn--danger { background:#ef4444; border-color:#ef4444; color:#fff; }
+.btn--ghost { background:transparent; }
+.alert--error { color:#b91c1c; }
+.muted { color:#64748b; }
+

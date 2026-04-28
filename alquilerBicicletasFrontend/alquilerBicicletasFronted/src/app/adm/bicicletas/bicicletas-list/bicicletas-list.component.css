@@ -1,0 +1,13 @@
+.card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04); }
+.card__header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #eef2f7; }
+.card__body { padding:16px; }
+.table { width:100%; border-collapse:collapse; }
+.table th, .table td { padding:10px; border-bottom:1px solid #f1f5f9; text-align:left; }
+.badge { background:#eef2ff; color:#312e81; padding:2px 8px; border-radius:999px; font-size:.85rem; }
+.actions { display:flex; gap:8px; justify-content:flex-end; }
+.btn { border:1px solid #e5e7eb; background:#fff; padding:6px 10px; border-radius:8px; cursor:pointer; }
+.btn--primary { background:#0ea5e9; border-color:#0ea5e9; color:#fff; }
+.btn--danger { background:#ef4444; border-color:#ef4444; color:#fff; }
+.btn--ghost { background:transparent; }
+.alert--error { color:#b91c1c; }
+.muted { color:#64748b; }

@@ -1,0 +1,39 @@
+:root {
+  /* Colores base */
+  --ui-bg-dark-1: #1a202c;
+  --ui-bg-dark-2: #2d3748;
+  --ui-bg-light: #ffffff;
+  --ui-border: #e9ecef;
+  --ui-border-dark: #4a5568;
+  --ui-text: #495057;
+  --ui-text-muted: #6c757d;
+  --ui-accent: #ffc107;
+  --ui-accent-strong: #ffb300;
+  --ui-shadow-rgb: 0,0,0;
+
+  /* Tipografía y tamaños */
+  --ui-radius-xl: 16px;
+  --ui-radius-lg: 12px;
+  --ui-radius-md: 8px;
+  --ui-space-1: 8px;
+  --ui-space-2: 12px;
+  --ui-space-3: 16px;
+  --ui-space-4: 20px;
+  --ui-space-5: 24px;
+
+  /* Sombras */
+  --ui-shadow-sm: 0 2px 4px rgba(var(--ui-shadow-rgb), 0.05);
+  --ui-shadow-md: 0 4px 12px rgba(var(--ui-shadow-rgb), 0.08);
+  --ui-shadow-lg: 0 20px 40px rgba(var(--ui-shadow-rgb), 0.15);
+  --ui-shadow-accent: 0 3px 12px rgba(255, 193, 7, 0.3);
+}
+
+/* Animaciones base */
+@keyframes ui-fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ui-slide-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

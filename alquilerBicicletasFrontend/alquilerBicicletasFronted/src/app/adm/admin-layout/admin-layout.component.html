@@ -1,0 +1,24 @@
+<div class="admin-shell">
+  <aside class="admin-aside">
+    <div class="brand">Panel</div>
+    <nav>
+      <a routerLink="/calendario" routerLinkActive="is-active">Calendario</a>
+      <a routerLink="/admin/reservas" routerLinkActive="is-active">Reservas</a>
+      <a routerLink="bicicletas" routerLinkActive="is-active">Bicicletas</a>
+      <a routerLink="/admin/accesorios" routerLinkActive="active">Accesorios</a>
+      <a routerLink="/admin/tarifas" routerLinkActive="is-active">Tarifas</a>
+      <!-- <a routerLink="clientes" routerLinkActive="is-active">Clientes</a> -->
+      <!-- <a routerLink="extras" routerLinkActive="is-active">Extras</a> -->
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <h1>Administración</h1>
+    </header>
+
+    <section class="admin-content">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+</div>

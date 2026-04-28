@@ -1,0 +1,60 @@
+<!-- src/app/adm/tarifas/tarifas-list/tarifas-list.component.html -->
+<div class="card">
+  <div class="card__header">
+    <h2>Tarifas</h2>
+    <div class="actions">
+      <button class="btn btn--primary" (click)="crear()">Nueva tarifa</button>
+    </div>
+  </div>
+
+  <div class="card__body">
+    <div *ngIf="loading">Cargando…</div>
+    <div *ngIf="error" class="alert alert--error">{{ error }}</div>
+
+    <table class="ui-table" *ngIf="!loading && tarifas.length">
+      <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Precio</th>
+        <th>Tipo</th>
+        <th>Horas / Horario</th>
+        <th>Días mín.</th>
+        <th>Activa</th>
+        <th style="width: 240px;">Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let t of tarifas">
+        <td>
+          <div class="tbl-title">{{ t.nombre }}</div>
+          <div class="tbl-sub">{{ t.descripcion }}</div>
+        </td>
+        <td>{{ t.precio | currency:'EUR':'symbol' }}</td>
+        <td>{{ t.precioPorDia ? 'Por día' : 'Por horas' }}</td>
+        <td>
+          <ng-container *ngIf="!t.precioPorDia">
+            <ng-container *ngIf="t.horaInicio && t.horaFin; else porHoras">
+              {{ t.horaInicio }}–{{ t.horaFin }}
+            </ng-container>
+            <ng-template #porHoras>{{ t.horasIncluidas || 0 }} h</ng-template>
+          </ng-container>
+          <ng-container *ngIf="t.precioPorDia">—</ng-container>
+        </td>
+        <td>{{ t.precioPorDia ? (t.diasMinimos || 1) : '—' }}</td>
+        <td>
+          <span class="badge" [class.badge--success]="t.activa" [class.badge--muted]="!t.activa">
+            {{ t.activa ? 'Sí' : 'No' }}
+          </span>
+        </td>
+        <td class="tbl-actions">
+          <button class="btn btn--ghost" (click)="editar(t)">Editar</button>
+          <button class="btn" (click)="toggleActiva(t)">{{ t.activa ? 'Desactivar' : 'Activar' }}</button>
+          <button class="btn btn--warn" (click)="borrar(t)">Eliminar</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && !tarifas.length" class="muted">No hay tarifas.</div>
+  </div>
+</div>

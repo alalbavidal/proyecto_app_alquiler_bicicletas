@@ -1,0 +1,17 @@
+{
+  "/api": {
+    "target": "http://localhost:8085",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/imagenes": {
+    "target": "http://localhost:8085",
+    "secure": false,
+    "changeOrigin": true
+  },
+  "/documentos": {
+    "target": "http://localhost:8085",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

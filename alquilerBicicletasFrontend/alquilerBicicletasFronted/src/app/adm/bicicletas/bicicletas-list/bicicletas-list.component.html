@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="card__header">
+    <h2>Bicicletas</h2>
+    <button class="btn btn--primary" (click)="crear()">Nueva bicicleta</button>
+  </div>
+
+  <div class="card__body">
+    <div *ngIf="loading">Cargando…</div>
+    <div *ngIf="error" class="alert alert--error">{{ error }}</div>
+
+    <table class="table" *ngIf="!loading && data.length">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Modelo</th>
+        <th>Número</th>
+        <th>Estado</th>
+        <th>Observaciones</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let b of data">
+        <td>{{ b.id }}</td>
+        <td>{{ b.modelo }}</td>
+        <td>{{ b.numero }}</td>
+        <td><span class="badge">{{ b.estado }}</span></td>
+        <td>{{ b.observaciones }}</td>
+        <td class="actions">
+          <button class="btn btn--ghost" (click)="editar(b.id)">Editar</button>
+          <button class="btn btn--danger" (click)="eliminar(b)">Borrar</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && !data.length" class="muted">No hay bicicletas.</div>
+  </div>
+</div>

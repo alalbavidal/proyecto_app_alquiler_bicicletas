@@ -1,0 +1,14 @@
+<div class="ui-card">
+  <div class="ui-section">
+    <label class="ui-label"><i class="bi bi-currency-euro"></i> Selecciona una tarifa</label>
+    <div class="ui-control">
+      <select class="ui-select" [(ngModel)]="tarifaSeleccionada" (change)="onTarifaSeleccionada()">
+        <option [ngValue]="null" disabled>Elige una tarifa...</option>
+        <option *ngFor="let tarifa of tarifas" [ngValue]="tarifa">
+          {{ tarifa.nombre }} - {{ tarifa.precio | currency:'EUR':'symbol' }}
+        </option>
+      </select>
+      <span class="ui-select__arrow">&#9662;</span>
+    </div>
+  </div>
+</div>
