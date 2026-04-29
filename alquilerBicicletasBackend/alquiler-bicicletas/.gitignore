@@ -33,5 +33,8 @@ build/
 ### VS Code ###
 .vscode/
 
-# Secrets
-application-secrets.properties
+# Secretos locales
+application-local.properties
+
+# VSCode local config (opcional, muchos equipos sí lo suben)
+.vscode/launch.json
