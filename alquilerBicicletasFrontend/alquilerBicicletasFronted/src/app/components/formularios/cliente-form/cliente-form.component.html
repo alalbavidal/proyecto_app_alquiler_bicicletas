@@ -5,7 +5,8 @@
   </h3>
 
   <form (ngSubmit)="onSubmit()" #clienteForm="ngForm" novalidate>
-    <!-- Nombre -->
+    
+    <!-- ===== NOMBRE ===== -->
     <div class="ui-section">
       <label class="block" for="nombre">Nombre *</label>
       <input
@@ -14,11 +15,18 @@
         type="text"
         [(ngModel)]="cliente.nombre"
         required
+        #nombreInput="ngModel"
         class="ui-input"
+        [class.border-red-500]="nombreInput.invalid && nombreInput.touched"
+        aria-describedby="nombre-error"
       />
+      <div *ngIf="nombreInput.invalid && nombreInput.touched" id="nombre-error" class="text-red-600 text-sm mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+        El nombre es obligatorio.
+      </div>
     </div>
 
-    <!-- Apellido -->
+    <!-- ===== APELLIDO ===== -->
     <div class="ui-section">
       <label class="block" for="apellido">Apellido *</label>
       <input
@@ -27,11 +35,18 @@
         type="text"
         [(ngModel)]="cliente.apellido"
         required
+        #apellidoInput="ngModel"
         class="ui-input"
+        [class.border-red-500]="apellidoInput.invalid && apellidoInput.touched"
+        aria-describedby="apellido-error"
       />
+      <div *ngIf="apellidoInput.invalid && apellidoInput.touched" id="apellido-error" class="text-red-600 text-sm mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+        El apellido es obligatorio.
+      </div>
     </div>
 
-    <!-- Email -->
+    <!-- ===== EMAIL ===== -->
     <div class="ui-section">
       <label class="block" for="email">Email *</label>
       <input
@@ -41,11 +56,19 @@
         [(ngModel)]="cliente.email"
         required
         email
+        #emailInput="ngModel"
         class="ui-input"
+        [class.border-red-500]="emailInput.invalid && emailInput.touched"
+        aria-describedby="email-error"
       />
+      <div *ngIf="emailInput.invalid && emailInput.touched" id="email-error" class="text-red-600 text-sm mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+        <span *ngIf="emailInput.errors?.['required']">El email es obligatorio.</span>
+        <span *ngIf="emailInput.errors?.['email']">Introduce un email válido (ej: nombre&#64;dominio.com).</span>
+      </div>
     </div>
 
-    <!-- Fecha de Nacimiento -->
+    <!-- ===== FECHA DE NACIMIENTO ===== -->
     <div class="ui-section">
       <label class="block" for="fechaNacimiento">Fecha de Nacimiento *</label>
       <input
@@ -54,11 +77,18 @@
         type="date"
         [(ngModel)]="cliente.fechaNacimiento"
         required
+        #fechaNacimientoInput="ngModel"
         class="ui-input"
+        [class.border-red-500]="fechaNacimientoInput.invalid && fechaNacimientoInput.touched"
+        aria-describedby="fechaNacimiento-error"
       />
+      <div *ngIf="fechaNacimientoInput.invalid && fechaNacimientoInput.touched" id="fechaNacimiento-error" class="text-red-600 text-sm mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+        La fecha de nacimiento es obligatoria.
+      </div>
     </div>
 
-    <!-- Teléfono -->
+    <!-- ===== TELÉFONO (Opcional) ===== -->
     <div class="ui-section">
       <label class="block" for="telefono">Teléfono</label>
       <input
@@ -67,13 +97,23 @@
         type="tel"
         [(ngModel)]="cliente.telefono"
         class="ui-input"
+        placeholder="Ej: 612345678"
       />
+      <small class="text-gray-500 text-xs">Opcional, pero recomendado para contacto rápido.</small>
     </div>
 
-    <!-- Tipo de documento -->
-    <div class="mb-3">
-      <label class="block mb-1" for="tipoDocumento">Tipo de documento *</label>
-      <select id="tipoDocumento" name="tipoDocumento" [(ngModel)]="cliente.tipoDocumento" required class="w-full p-2 border rounded">
+    <!-- ===== TIPO DE DOCUMENTO ===== -->
+    <div class="ui-section">
+      <label class="block" for="tipoDocumento">Tipo de documento *</label>
+      <select
+        id="tipoDocumento"
+        name="tipoDocumento"
+        [(ngModel)]="cliente.tipoDocumento"
+        required
+        #tipoDocumentoInput="ngModel"
+        class="ui-input"
+        [class.border-red-500]="tipoDocumentoInput.invalid && tipoDocumentoInput.touched"
+      >
         <option [ngValue]="'DNI'">DNI</option>
         <option [ngValue]="'NIE'">NIE</option>
         <option [ngValue]="'PASAPORTE'">Pasaporte</option>
@@ -81,34 +121,67 @@
       </select>
     </div>
 
-    <!-- Número de documento -->
-    <!-- Nº documento (requerido) -->
-    <label for="documentoIdentidad">Número de documento *</label>
-    <input id="documentoIdentidad" name="documentoIdentidad" type="text"
-           [(ngModel)]="cliente.documentoIdentidad" required
-           class="w-full p-2 border rounded" />
-    <small *ngIf="cliente.documentoIdentidad && !isDocumentoValido()" class="text-red-600">
-      Formato de documento no válido para {{ cliente.tipoDocumento }}.
-    </small>
+    <!-- ===== NÚMERO DE DOCUMENTO ===== -->
+    <div class="ui-section">
+      <label class="block" for="documentoIdentidad">Número de documento *</label>
+      <input
+        id="documentoIdentidad"
+        name="documentoIdentidad"
+        type="text"
+        [(ngModel)]="cliente.documentoIdentidad"
+        required
+        #documentoInput="ngModel"
+        class="ui-input"
+        [class.border-red-500]="(documentoInput.invalid && documentoInput.touched) || (cliente.documentoIdentidad && !isDocumentoValido())"
+        aria-describedby="documento-error"
+        placeholder="Ej: 12345678A"
+      />
+      <div id="documento-error" class="text-red-600 text-sm mt-1">
+        <span *ngIf="documentoInput.invalid && documentoInput.touched">
+          <i class="bi bi-exclamation-circle"></i>
+          El número de documento es obligatorio.
+        </span>
+        <span *ngIf="cliente.documentoIdentidad && !isDocumentoValido()">
+          <i class="bi bi-exclamation-circle"></i>
+          Formato no válido para {{ cliente.tipoDocumento }}.
+          <span *ngIf="cliente.tipoDocumento === 'DNI'">(Ej: 12345678A)</span>
+          <span *ngIf="cliente.tipoDocumento === 'NIE'">(Ej: X1234567A)</span>
+          <span *ngIf="cliente.tipoDocumento === 'PASAPORTE'">(Entre 5 y 20 caracteres)</span>
+        </span>
+      </div>
+    </div>
 
-    <!-- Subir foto del documento -->
-    <div class="mb-3">
+    <!-- ===== SUBIR FOTO DEL DOCUMENTO ===== -->
+    <div class="ui-section">
       <label class="block mb-2">Documento (imagen)</label>
       <input
         type="file"
         accept=".jpg,.jpeg,.png,.webp"
         (change)="onFileSelected($event)"
+        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
       />
-      <small *ngIf="uploading">Subiendo…</small>
-      <small class="text-red-600" *ngIf="uploadError">{{ uploadError }}</small>
-
-      <div *ngIf="previewUrl" class="mt-2">
-        <img [src]="previewUrl" alt="Preview documento" style="max-width: 240px; border-radius: 8px;" />
+      <small class="text-gray-500 text-xs">Formatos permitidos: JPG, PNG, WEBP. Máximo 5MB.</small>
+      
+      <!-- Estado de subida -->
+      <div *ngIf="uploading" class="text-blue-600 text-sm mt-1">
+        <i class="bi bi-arrow-repeat animate-spin"></i>
+        Subiendo documento...
+      </div>
+      
+      <!-- Error de subida -->
+      <div *ngIf="uploadError" class="text-red-600 text-sm mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+        {{ uploadError }}
       </div>
 
+      <!-- Vista previa -->
+      <div *ngIf="previewUrl" class="mt-2">
+        <img [src]="previewUrl" alt="Vista previa del documento" class="max-w-48 rounded-lg border border-gray-200" />
+        <small class="text-green-600 text-xs">✅ Documento subido correctamente</small>
+      </div>
     </div>
 
-
+    <!-- ===== BOTÓN DE ENVÍO ===== -->
     <div class="ui-section" style="margin-top: var(--ui-space-4);">
       <button
         type="submit"
@@ -118,6 +191,9 @@
         <i class="bi bi-check2-circle"></i>
         Confirmar Datos
       </button>
+      <small *ngIf="clienteForm.invalid || !isDocumentoValido()" class="text-gray-500 text-xs ml-2">
+        Completa todos los campos obligatorios.
+      </small>
     </div>
   </form>
 </div>

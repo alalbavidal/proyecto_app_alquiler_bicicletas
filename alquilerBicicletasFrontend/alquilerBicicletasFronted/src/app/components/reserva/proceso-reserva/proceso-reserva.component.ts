@@ -33,6 +33,7 @@ import { ReservaResponseDTO } from '../../../models/reservaResponse.model';
     DatePipe,
   ],
   templateUrl: './proceso-reserva.component.html',
+  
 })
 export class ProcesoReservaComponent {
   @ViewChild('toast') toast!: ToastComponent;
@@ -63,6 +64,9 @@ export class ProcesoReservaComponent {
 
   idiomaContrato: string = 'es';
 
+  //Controlar el paso actual 
+  pasoActual: number = 1; // 1: Fecha, 2: Tarifa y Bicis, 3: Accesorios, 4: Cliente y Resumen
+
 
   constructor(private reservaService: ReservaService) {}
 
@@ -83,6 +87,7 @@ export class ProcesoReservaComponent {
     this.accesoriosCargados = false;
 
     this.cargarTarifas(fecha);
+    this.pasoActual = 1; // Reinicia al paso 1
   }
 
   cargarTarifas(fecha: Date) {
@@ -116,6 +121,8 @@ export class ProcesoReservaComponent {
     if (this.fechaSeleccionada) {
       this.cargarBicicletasDisponibles(t, this.fechaSeleccionada);
     }
+
+    this.pasoActual = 2; // Avanza al paso 2
   }
 
   cargarBicicletasDisponibles(tarifa: Tarifa, fecha: Date) {
@@ -151,6 +158,7 @@ export class ProcesoReservaComponent {
     this.accesoriosSeleccionados = [];
     this.cliente = undefined;
     this.cargarAccesorios(bicis);
+    this.pasoActual = 3; // Avanza al paso 3
   }
 
   cargarAccesorios(bicicletas: Bicicleta[]) {
@@ -215,11 +223,13 @@ export class ProcesoReservaComponent {
   onAccesoriosSeleccionados(accesorios: AccesorioConCantidadUI[]) {
     this.accesoriosSeleccionados = accesorios;
     this.cliente = undefined;
+    this.pasoActual = 4; // Avanza al paso 4
   }
 
   onClienteConfirmado(clienteData: Cliente) {
     this.cliente = clienteData;
     console.log('Cliente confirmado:', clienteData);
+    this.pasoActual = 4; // Mantiene el paso 4 (resumen final)
   }
 
   onConfirmarReserva() {
@@ -305,6 +315,8 @@ export class ProcesoReservaComponent {
         console.error(error);
       },
     });
+
+    
   }
   cambiarIdioma(idioma: string) {
     this.idiomaContrato = idioma;
