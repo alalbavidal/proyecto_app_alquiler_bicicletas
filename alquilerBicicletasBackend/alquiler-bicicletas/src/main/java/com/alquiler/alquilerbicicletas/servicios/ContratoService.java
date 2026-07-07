@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -157,41 +158,49 @@ public class ContratoService {
             document.add(tablaBicis);
 
             // --- ACCESORIOS ---
-            if (reserva.getAccesorios() != null && !reserva.getAccesorios().isEmpty()) {
-                String accesoriosAlquilados = esIngles ? "RENTED ACCESSORIES" : "ACCESORIOS ALQUILADOS";
-                document.add(new Paragraph(accesoriosAlquilados, subtitleFont));
-                PdfPTable tablaAccesorios = new PdfPTable(3);
-                tablaAccesorios.setWidthPercentage(100);
-                tablaAccesorios.setSpacingBefore(10f);
-                tablaAccesorios.setSpacingAfter(10f);
+        if (reserva.getAccesorios() != null && !reserva.getAccesorios().isEmpty()) {
+            String accesoriosAlquilados = esIngles ? "RENTED ACCESSORIES" : "ACCESORIOS ALQUILADOS";
+            document.add(new Paragraph(accesoriosAlquilados, subtitleFont));
+            PdfPTable tablaAccesorios = new PdfPTable(3);
+            tablaAccesorios.setWidthPercentage(100);
+            tablaAccesorios.setSpacingBefore(10f);
+            tablaAccesorios.setSpacingAfter(10f);
 
-                String accesorio = esIngles ? "Accessory" : "Accesorio";
-                String cantidad = esIngles ? "Quantity" : "Cantidad";
-                String precio = esIngles ? "Price" : "Precio";
-                tablaAccesorios.addCell(new PdfPCell(new Phrase(accesorio, boldFont)));
-                tablaAccesorios.addCell(new PdfPCell(new Phrase(cantidad, boldFont)));
-                tablaAccesorios.addCell(new PdfPCell(new Phrase(precio, boldFont)));
+            String accesorio = esIngles ? "Accessory" : "Accesorio";
+            String cantidad = esIngles ? "Quantity" : "Cantidad";
+            String precio = esIngles ? "Price" : "Precio";
+            tablaAccesorios.addCell(new PdfPCell(new Phrase(accesorio, boldFont)));
+            tablaAccesorios.addCell(new PdfPCell(new Phrase(cantidad, boldFont)));
+            tablaAccesorios.addCell(new PdfPCell(new Phrase(precio, boldFont)));
 
-                for (ReservaAccesorio ra : reserva.getAccesorios()) {
-                    tablaAccesorios.addCell(new Phrase(ra.getAccesorio().getNombre(), normalFont));
-                    tablaAccesorios.addCell(new Phrase(String.valueOf(ra.getCantidad()), normalFont));
-                    tablaAccesorios.addCell(new Phrase(euros(ra.getPrecioTotal()), normalFont));
-                }
-                document.add(tablaAccesorios);
+            for (ReservaAccesorio ra : reserva.getAccesorios()) {
+                tablaAccesorios.addCell(new Phrase(ra.getAccesorio().getNombre(), normalFont));
+                tablaAccesorios.addCell(new Phrase(String.valueOf(ra.getCantidad()), normalFont));
+                tablaAccesorios.addCell(new Phrase(euros(ra.getPrecioTotal()), normalFont));
             }
+            document.add(tablaAccesorios);
+        }
 
-            // --- RESUMEN ---
-            var extras = reserva.getExtrasTotal() == null ? BigDecimal.ZERO : reserva.getExtrasTotal();
-            var base = reserva.getPrecioTotal().subtract(extras);
+           // --- RESUMEN ECONÓMICO ---
+        var extras = reserva.getExtrasTotal() == null ? BigDecimal.ZERO : reserva.getExtrasTotal();
+        var base = reserva.getPrecioTotal().subtract(extras);
+        
+            // ✅ Calcular desglose del IVA (21%)
+            BigDecimal ivaPorcentaje = new BigDecimal("0.21");
+            BigDecimal subtotal = reserva.getPrecioTotal().divide(BigDecimal.ONE.add(ivaPorcentaje), 2, RoundingMode.HALF_UP);
+            BigDecimal ivaCalculado = reserva.getPrecioTotal().subtract(subtotal);
+            
             String resumenEconomico = esIngles ? "ECONOMIC SUMMARY" : "RESUMEN ECONÓMICO";
             document.add(new Paragraph(resumenEconomico, subtitleFont));
-            String precioBase = esIngles ? "Base price" : "Precio base";
-            document.add(new Paragraph(precioBase + ": " + euros(base), normalFont));
-            if (extras.compareTo(BigDecimal.ZERO) > 0) {
-                String costeAccesorios = esIngles ? "Accessories cost" : "Coste accesorios";
-                document.add(new Paragraph(costeAccesorios + ": " + euros(extras), normalFont));
-            }
-            String precioTotal = esIngles ? "TOTAL PRICE" : "PRECIO TOTAL";
+            String precioBase = esIngles ? "Subtotal (without VAT)" : "Subtotal (sin IVA)";
+            document.add(new Paragraph(precioBase + ": " + euros(subtotal), normalFont));
+            
+            // ✅ Añadir el IVA desglosado
+            String ivaText = esIngles ? "VAT (21%)" : "IVA (21%)";
+            document.add(new Paragraph(ivaText + ": " + euros(ivaCalculado), normalFont));
+            
+            // ✅ Mostrar el total con IVA incluido
+            String precioTotal = esIngles ? "TOTAL (VAT included)" : "TOTAL (IVA incluido)";
             document.add(new Paragraph(precioTotal + ": " + euros(reserva.getPrecioTotal()), boldFont));
             document.add(new Paragraph(" ", normalFont));
 

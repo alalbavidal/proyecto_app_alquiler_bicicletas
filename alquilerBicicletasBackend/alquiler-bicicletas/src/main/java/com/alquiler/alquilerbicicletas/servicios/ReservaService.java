@@ -70,36 +70,48 @@ public class ReservaService {
 
     /**
      * Crea una reserva con un cliente existente o crea uno nuevo si no existe.
-     * Cuando el cliente aún no está registrado o se desea una UX fluida sin preregistro
-     * Cliente desde frontend
+     
+     * Ideal para DEMO, ACTUALIZA DATOS DEL CLIENTE EXISTENTE si usa el mismo email, para ir probando con distintos nombres. 
      * @param dto DTO que contiene los datos de la reserva y del cliente.
      * @return ReservaResponseDTO con los detalles de la reserva creada.
      */
 
     @Transactional
-    public ReservaResponseDTO crearReservaConCliente(ReservaConClienteDTO dto, String idioma) {
-        ClienteDTO clienteDTO = dto.getCliente();
-        logger.info("Buscando cliente por email: {}", clienteDTO.getEmail());
+public ReservaResponseDTO crearReservaConCliente(ReservaConClienteDTO dto, String idioma) {
+    ClienteDTO clienteDTO = dto.getCliente();
+    logger.info("Buscando cliente por email: {}", clienteDTO.getEmail());
 
-        Cliente cliente = clienteRepository.findByEmail(clienteDTO.getEmail());
+    Cliente cliente = clienteRepository.findByEmail(clienteDTO.getEmail());
 
-        if (cliente == null) {
-            logger.info("Cliente no existe, registrando nuevo cliente...");
-            cliente = clienteService.mapearDtoAEntidad(clienteDTO);
-            cliente = clienteService.crearCliente(cliente);
-            logger.info("Cliente creado con ID: {}", cliente.getId());
-        } else {
-            logger.info("Cliente ya existe con ID: {}", cliente.getId());
+    if (cliente == null) {
+        logger.info("Cliente no existe, registrando nuevo cliente...");
+        cliente = clienteService.mapearDtoAEntidad(clienteDTO);
+        cliente = clienteService.crearCliente(cliente);
+        logger.info("Cliente creado con ID: {}", cliente.getId());
+    } else {
+        // ✅ ACTUALIZAR LOS DATOS DEL CLIENTE EXISTENTE
+        logger.info("Cliente ya existe con ID: {}, actualizando datos...", cliente.getId());
+        cliente.setNombre(clienteDTO.getNombre());
+        cliente.setApellido(clienteDTO.getApellido());
+        cliente.setTelefono(clienteDTO.getTelefono());
+        cliente.setDocumentoIdentidad(clienteDTO.getDocumentoIdentidad());
+        cliente.setTipoDocumento(clienteDTO.getTipoDocumento());
+        // Si hay nueva foto de documento, actualizarla también
+        if (clienteDTO.getFotoDocumentoUrl() != null && !clienteDTO.getFotoDocumentoUrl().isEmpty()) {
+            cliente.setFotoDocumentoUrl(clienteDTO.getFotoDocumentoUrl());
         }
-
-        // Asignar cliente a la reserva
-        ReservaDTO reservaDTO = dto.getReserva();
-        reservaDTO.setClienteId(cliente.getId());
-
-        logger.info("Procediendo a crear la reserva con cliente en idioma: {}", idioma);
-
-        return crearReservaConIdioma(reservaDTO, idioma); // ← CORREGIDO
+        cliente = clienteRepository.save(cliente);
+        logger.info("Cliente actualizado con ID: {}", cliente.getId());
     }
+
+    // Asignar cliente a la reserva
+    ReservaDTO reservaDTO = dto.getReserva();
+    reservaDTO.setClienteId(cliente.getId());
+
+    logger.info("Procediendo a crear la reserva con cliente en idioma: {}", idioma);
+
+    return crearReservaConIdioma(reservaDTO, idioma);
+}
 
     // Método para compatibilidad
     public ReservaResponseDTO crearReservaConCliente(ReservaConClienteDTO dto) {
