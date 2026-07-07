@@ -395,7 +395,7 @@ export class ProcesoReservaComponent {
   }
 
  onToastAction() {
-   window.location.href = 'https://www.bikerental.com.es/';
+   window.location.href = '';
  }
 
 

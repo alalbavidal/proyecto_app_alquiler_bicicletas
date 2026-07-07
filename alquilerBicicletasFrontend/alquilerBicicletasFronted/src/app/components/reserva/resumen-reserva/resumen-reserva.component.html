@@ -47,7 +47,36 @@
   </ul>
 </div>
 
-<!-- ✅ Total con getter -->
-<div class="ui-section" style="margin-top: var(--ui-space-4);">
-  <p class="font-semibold">Total: {{ total | currency:'EUR':'symbol' }}</p>
+<!-- Desglose del total con IVA -->
+<div class="ui-section" style="margin-top: var(--ui-space-4); padding-top: var(--ui-space-3); border-top: 2px solid #e5e7eb;">
+  <div class="flex justify-between text-sm text-gray-600">
+    <span>Subtotal (sin IVA)</span>
+    <span>{{ subtotal | currency:'EUR':'symbol' }}</span>
+  </div>
+  <div class="flex justify-between text-sm text-gray-600">
+    <span>IVA (21%)</span>
+    <span>{{ ivaCalculado | currency:'EUR':'symbol' }}</span>
+  </div>
+  <div class="flex justify-between text-lg font-bold mt-2 pt-2 border-t border-gray-200">
+    <span>Total (IVA incluido)</span>
+    <span>{{ total | currency:'EUR':'symbol' }}</span>
+  </div>
+  <p class="text-xs text-gray-400 mt-2 text-right">
+    * IVA incluido en el precio final
+  </p>
+</div>
+
+<!-- ✅ Botón de confirmar (siempre visible en el resumen) -->
+<div *ngIf="mostrarBotonConfirmar" class="ui-section" style="margin-top: var(--ui-space-3);">
+  <button
+    class="ui-btn ui-btn--primary w-full py-3 text-lg font-bold"
+    (click)="onConfirmar()"
+    [disabled]="bicicletas.length === 0 || !fecha || !tarifa"
+  >
+    <i class="bi bi-check2-circle"></i>
+    Confirmar Reserva
+  </button>
+  <p class="text-xs text-gray-400 mt-2 text-center">
+    Al confirmar, recibirás un email con el contrato de alquiler.
+  </p>
 </div>

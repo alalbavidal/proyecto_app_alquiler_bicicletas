@@ -99,6 +99,7 @@
     [tarifa]="tarifaSeleccionada"
     [bicicletas]="bicicletasSeleccionadas"
     [accesorios]="accesoriosSeleccionados"
+    [mostrarBotonConfirmar]="false"
     (eliminarBicicleta)="onEliminarBicicleta($event)"
     (eliminarAccesorio)="onEliminarAccesorio($event)"
   >
@@ -143,58 +144,66 @@
 </div>
 
   <!-- ===== PASO 4: DATOS DEL CLIENTE Y CONFIRMACIÓN ===== -->
-  <div *ngIf="pasoActual === 4" class="step-container">
-    <h2 class="text-xl font-bold mb-4">📝 Paso 4: Tus datos</h2>
-    <p class="text-sm text-gray-600 mb-4">Completa tus datos para confirmar la reserva.</p>
+<div *ngIf="pasoActual === 4" class="step-container">
+  <h2 class="text-xl font-bold mb-4">📝 Paso 4: Tus datos</h2>
+  <p class="text-sm text-gray-600 mb-4">Completa tus datos para confirmar la reserva.</p>
 
-    <!-- Formulario de cliente -->
-    <app-cliente-form (clienteConfirmado)="onClienteConfirmado($event)">
-    </app-cliente-form>
+  <!-- Formulario de cliente -->
+  <app-cliente-form (clienteConfirmado)="onClienteConfirmado($event)">
+  </app-cliente-form>
 
-    <!-- Selector de idioma -->
-    <div *ngIf="cliente" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-      <h3 class="text-lg font-semibold text-blue-800 mb-2">Idioma del contrato / Contract Language</h3>
-      <div class="flex space-x-4">
-        <button
-          (click)="cambiarIdioma('es')"
-          [class]="idiomaContrato === 'es'
-            ? 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow'
-            : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'"
-        >
-          🇪🇸 Español
-        </button>
-        <button
-          (click)="cambiarIdioma('en')"
-          [class]="idiomaContrato === 'en'
-            ? 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow'
-            : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'"
-        >
-          🇬🇧 English
-        </button>
-      </div>
-    </div>
-
-    <!-- Resumen final con confirmación -->
-    <div *ngIf="cliente" class="mt-4">
-      <app-resumen-reserva
-        [fecha]="fechaSeleccionada"
-        [tarifa]="tarifaSeleccionada"
-        [bicicletas]="bicicletasSeleccionadas"
-        [accesorios]="accesoriosSeleccionados"
-        (confirmarReserva)="onConfirmarReserva()"
-      >
-      </app-resumen-reserva>
-    </div>
-
-    <!-- Navegación -->
-    <div class="mt-6 flex justify-between">
+  <!-- Selector de idioma -->
+  <div *ngIf="cliente" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+    <h3 class="text-lg font-semibold text-blue-800 mb-2">Idioma del contrato / Contract Language</h3>
+    <div class="flex space-x-4">
       <button
-        (click)="irAlPaso(3)"
-        class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        (click)="cambiarIdioma('es')"
+        [class]="idiomaContrato === 'es'
+          ? 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow'
+          : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'"
       >
-        ← Anterior
+        🇪🇸 Español
+      </button>
+      <button
+        (click)="cambiarIdioma('en')"
+        [class]="idiomaContrato === 'en'
+          ? 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow'
+          : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'"
+      >
+        🇬🇧 English
       </button>
     </div>
+    <p class="text-sm text-blue-600 mt-2">
+      {{ idiomaContrato === 'es'
+      ? 'El contrato y el email de confirmación se enviarán en el idioma seleccionado.'
+      : 'The contract and confirmation email will be sent in the selected language.' }}
+    </p>
+  </div>
+
+  <!-- ✅ Resumen final con CONFIRMACIÓN (solo si el cliente está confirmado) -->
+  <div *ngIf="cliente" class="mt-4">
+    <!-- El resumen ahora muestra el botón "Confirmar Reserva" -->
+    <app-resumen-reserva
+      [fecha]="fechaSeleccionada"
+      [tarifa]="tarifaSeleccionada"
+      [bicicletas]="bicicletasSeleccionadas"
+      [accesorios]="accesoriosSeleccionados"
+      [mostrarBotonConfirmar]="true"
+      (confirmarReserva)="onConfirmarReserva()"
+      (eliminarBicicleta)="onEliminarBicicleta($event)"
+      (eliminarAccesorio)="onEliminarAccesorio($event)"
+    >
+    </app-resumen-reserva>
+  </div>
+
+  <!-- Navegación -->
+  <div class="mt-6 flex justify-between">
+    <button
+      (click)="irAlPaso(3)"
+      class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+    >
+      ← Anterior
+    </button>
   </div>
 </div>
 
