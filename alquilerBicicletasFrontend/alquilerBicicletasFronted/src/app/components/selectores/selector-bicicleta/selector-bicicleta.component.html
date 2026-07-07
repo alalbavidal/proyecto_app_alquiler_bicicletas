@@ -1,20 +1,28 @@
-<div class="ui-card">
-  <h4 class="ui-label"><i class="bi bi-bicycle"></i> Selecciona bicicleta(s)</h4>
+<!-- selector-bicicleta.component.html -->
+<div style="border: 2px solid red; padding: 10px; margin: 10px 0; background: white;">
+  
+  <h3 style="font-weight: bold; margin-bottom: 10px;">Selecciona bicicletas</h3>
+  
+  <!-- Contador -->
+  <div style="margin-bottom: 10px; padding: 5px; background: #f0f0f0;">
+    <span *ngIf="seleccion.size === 0" style="color: #b45309;">
+      ⚠️ Selecciona al menos una bicicleta
+    </span>
+    <span *ngIf="seleccion.size > 0" style="color: #16a34a;">
+      ✅ {{ seleccion.size }} bicicleta(s) seleccionada(s)
+    </span>
+  </div>
 
-  <ul class="ui-list">
-    <li *ngFor="let bici of bicicletas"
-        class="ui-list-item"
-        (click)="toggleSeleccion(bici)"
-        [class.is-selected]="seleccion.has(bici.id)">
-      <div>
-        <div class="font-medium">{{ bici.modelo }} {{ bici.numero}}</div>
-
-        <div class="text-gray-600 italic">{{ bici.tipo }}</div>
-      </div>
-
-      <span class="font-semibold">
-        {{ bici.precioDia | currency:'EUR' }}
-      </span>
-    </li>
-  </ul>
-</div>
+  <!-- Lista -->
+  <div *ngFor="let bici of bicicletas" style="border: 1px solid #ccc; padding: 5px; margin: 5px 0;">
+    <label>
+      <input
+        type="checkbox"
+        [checked]="seleccion.has(bici.id)"
+        (change)="toggleSeleccion(bici)"
+      />
+      {{ bici.modelo }} - {{ bici.tipo }} - Nº {{ bici.numero }} - {{ bici.precioDia }}€
+    </label>
+  </div>
+  
+   </div>

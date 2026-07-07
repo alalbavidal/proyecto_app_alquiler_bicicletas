@@ -1,54 +1,53 @@
-<div class="ui-card">
-  <h3 class="ui-label">
-    <i class="bi bi-receipt"></i>
-    Resumen de tu reserva
-  </h3>
-
-  <div class="ui-section">
-    <p><strong>Fecha:</strong> {{ fecha | date:'fullDate' }}</p>
-    <p><strong>Tarifa:</strong> {{ tarifa?.nombre }} - {{ tarifa?.precio | currency:'EUR':'symbol' }}</p>
-  </div>
-
-  <div class="ui-section">
-    <h4 class="ui-label">
-      <i class="bi bi-bicycle"></i>
-      Bicicletas seleccionadas
-    </h4>
-    <ul class="ui-list">
-      <li class="ui-list-item" *ngFor="let bici of bicicletas">
-        <div>
-          <div class="font-medium">{{ bici.modelo }} {{ bici.numero }}</div>
-          <small class="text-gray-600">{{ bici.tipo }}</small>
-        </div>
+<!-- Resumen de bicicletas -->
+<div class="ui-section">
+  <h4 class="ui-label">
+    <i class="bi bi-bicycle"></i>
+    Bicicletas seleccionadas
+  </h4>
+  <ul class="ui-list">
+    <li class="ui-list-item" *ngFor="let bici of bicicletas">
+      <div>
+        <div class="font-medium">{{ bici.modelo }} {{ bici.numero }}</div>
+        <small class="text-gray-600">{{ bici.tipo }}</small>
+      </div>
+      <div class="flex items-center gap-2">
         <span class="font-semibold">{{ bici.precioDia | currency:'EUR':'symbol' }}</span>
-      </li>
-    </ul>
-  </div>
+        <button 
+          (click)="onEliminarBicicleta(bici.id)" 
+          class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"
+          aria-label="Eliminar bicicleta"
+          title="Eliminar bicicleta">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>
 
-  <div class="ui-section" *ngIf="accesorios.length > 0">
-    <h4 class="ui-label">
-      <i class="bi bi-box-seam"></i>
-      Accesorios seleccionados
-    </h4>
-    <ul class="ui-list">
-      <li class="ui-list-item" *ngFor="let acc of accesorios">
-        <span class="font-medium">{{ acc.cantidadSeleccionada }} - {{ acc.nombre }}</span>
-<span class="font-semibold">{{ acc.cantidadSeleccionada * acc.precio | currency:'EUR':'symbol' }}</span>      </li>
-    </ul>
-  </div>
+<!-- Resumen de accesorios -->
+<div class="ui-section" *ngIf="accesorios.length > 0">
+  <h4 class="ui-label">
+    <i class="bi bi-box-seam"></i>
+    Accesorios seleccionados
+  </h4>
+  <ul class="ui-list">
+    <li class="ui-list-item" *ngFor="let acc of accesorios">
+      <span class="font-medium">{{ acc.cantidadSeleccionada }} - {{ acc.nombre }}</span>
+      <div class="flex items-center gap-2">
+        <span class="font-semibold">{{ acc.cantidadSeleccionada * acc.precio | currency:'EUR':'symbol' }}</span>
+        <button 
+          (click)="onEliminarAccesorio(acc.id)" 
+          class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"
+          aria-label="Eliminar accesorio"
+          title="Eliminar accesorio">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>
 
-  <div class="ui-section" style="margin-top: var(--ui-space-4);">
-    <p class="font-semibold">Total: {{ total | currency:'EUR':'symbol' }}</p>
-  </div>
-
-  <div class="ui-section" style="margin-top: var(--ui-space-3);">
-    <button
-      class="ui-btn ui-btn--primary"
-      (click)="onConfirmar()"
-      [disabled]="bicicletas.length === 0 || !fecha || !tarifa"
-    >
-      <i class="bi bi-check2-circle"></i>
-      Confirmar Reserva
-    </button>
-  </div>
+<!-- ✅ Total con getter -->
+<div class="ui-section" style="margin-top: var(--ui-space-4);">
+  <p class="font-semibold">Total: {{ total | currency:'EUR':'symbol' }}</p>
 </div>

@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Bicicleta } from '../../selectores/selector-bicicleta/selector-bicicleta.component';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Tarifa } from '../../../models/tarifa.model';
-import {AccesorioConCantidad} from '../../../models/accesorioConCantidad.model';
+import { AccesorioConCantidad } from '../../../models/accesorioConCantidad.model';
 
 @Component({
   selector: 'app-resumen-reserva',
   standalone: true,
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule],
   templateUrl: './resumen-reserva.component.html',
   styleUrls: ['./resumen-reserva.component.css']
 })
@@ -18,7 +18,10 @@ export class ResumenReservaComponent {
   @Input() accesorios: AccesorioConCantidad[] = [];
 
   @Output() confirmarReserva = new EventEmitter<void>();
+  @Output() eliminarBicicleta = new EventEmitter<number>();
+  @Output() eliminarAccesorio = new EventEmitter<number>();
 
+  // ✅ Usar un getter en lugar de ngOnInit
   get total(): number {
     const totalBicis = (this.bicicletas ?? [])
       .reduce((sum, b) => sum + (b.precioDia ?? 0), 0);
@@ -31,5 +34,13 @@ export class ResumenReservaComponent {
 
   onConfirmar(): void {
     this.confirmarReserva.emit();
+  }
+
+  onEliminarBicicleta(id: number) {
+    this.eliminarBicicleta.emit(id);
+  }
+
+  onEliminarAccesorio(id: number) {
+    this.eliminarAccesorio.emit(id);
   }
 }

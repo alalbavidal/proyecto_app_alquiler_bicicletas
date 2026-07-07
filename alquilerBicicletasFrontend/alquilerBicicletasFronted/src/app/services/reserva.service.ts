@@ -13,7 +13,9 @@ import {ReservaResponseDTO} from '../models/reservaResponse.model';
   providedIn: 'root'
 })
 export class ReservaService {
-  private apiUrl = 'http://localhost:8085/api';
+  // private apiUrl = 'http://localhost:8085/api';
+
+  private apiUrl = '/api'; // Usa el proxy
   constructor(private http: HttpClient) {}
 
   obtenerTarifas(fecha: string): Observable<Tarifa[]> {

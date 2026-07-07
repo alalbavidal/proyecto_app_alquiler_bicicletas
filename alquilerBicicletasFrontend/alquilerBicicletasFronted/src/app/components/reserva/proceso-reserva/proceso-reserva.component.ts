@@ -1,5 +1,5 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { DatePipe, NgIf } from '@angular/common';
+import { Component, Input, ViewChild, ChangeDetectorRef  } from '@angular/core';
+import {  NgIf } from '@angular/common';
 
 import { CalendarioReservaComponent } from '../calendario-reserva/calendario-reserva.component';
 import { SelectorTarifaComponent } from '../../selectores/selector-tarifa/selector-tarifa.component';
@@ -30,7 +30,7 @@ import { ReservaResponseDTO } from '../../../models/reservaResponse.model';
     ClienteFormComponent,
     ToastComponent,
     NgIf,
-    DatePipe,
+    
   ],
   templateUrl: './proceso-reserva.component.html',
   
@@ -68,44 +68,64 @@ export class ProcesoReservaComponent {
   pasoActual: number = 1; // 1: Fecha, 2: Tarifa y Bicis, 3: Accesorios, 4: Cliente y Resumen
 
 
-  constructor(private reservaService: ReservaService) {}
+  recargarResumen: boolean = true;
+
+
+  constructor(
+    private reservaService: ReservaService,  
+    private cdr: ChangeDetectorRef ) {}
+
+  
 
   onFechaSeleccionada(fecha: Date) {
-    this.fechaSeleccionada = fecha;
-
-    // Reset
-    this.tarifaSeleccionada = undefined;
-    this.bicicletasDisponibles = [];
-    this.bicicletasDisponiblesDTO = [];
-    this.bicicletasParaSelector = [];
-    this.bicicletasSeleccionadas = [];
-    this.accesoriosDisponibles = [];
-    this.accesoriosSeleccionados = [];
-    this.maxPorAccesorio = {};
-    this.cliente = undefined;
-    this.bicicletasCargadas = false;
-    this.accesoriosCargados = false;
-
-    this.cargarTarifas(fecha);
-    this.pasoActual = 1; // Reinicia al paso 1
-  }
+  // Guardamos la fecha seleccionada
+  this.fechaSeleccionada = fecha;
+  
+  // Solo reseteamos lo que depende de la fecha
+  this.tarifaSeleccionada = undefined;
+  this.tarifasDisponibles = [];
+  this.bicicletasDisponibles = [];
+  this.bicicletasDisponiblesDTO = [];
+  this.bicicletasParaSelector = [];
+  this.bicicletasSeleccionadas = [];
+  this.accesoriosDisponibles = [];
+  this.accesoriosSeleccionados = [];
+  this.maxPorAccesorio = {};
+  this.cliente = undefined;
+  this.bicicletasCargadas = false;
+  this.accesoriosCargados = false;
+  
+  // Cargar tarifas para la fecha seleccionada
+  this.cargarTarifas(fecha);
+  
+  // Mantener el paso actual en 1 (o ir al paso 1 si no está)
+  this.pasoActual = 1;
+}
 
   cargarTarifas(fecha: Date) {
-    const fechaStr = fecha.toISOString().split('T')[0];
-    this.reservaService.obtenerTarifas(fechaStr).subscribe({
-      next: (tarifas) => (this.tarifasDisponibles = tarifas),
-      error: (err) => {
-        this.toast.open({
-          type: 'error',
-          title: 'No se pudieron cargar las tarifas',
-          message: 'Inténtalo de nuevo en unos segundos.',
-          centered: true,
-          backdrop: true,
-          duration: 5000,
-        });
-      },
-    });
-  }
+  const fechaStr = fecha.toISOString().split('T')[0];
+  this.reservaService.obtenerTarifas(fechaStr).subscribe({
+    next: (tarifas) => {
+      this.tarifasDisponibles = tarifas;
+      // Si hay tarifas, nos aseguramos de que el paso sea 1
+      if (tarifas.length > 0) {
+        this.pasoActual = 1;
+      }
+    },
+    error: (err) => {
+      console.error('Error al cargar tarifas:', err);
+      this.tarifasDisponibles = [];
+      this.toast.open({
+        type: 'error',
+        title: 'No se pudieron cargar las tarifas',
+        message: 'Inténtalo de nuevo en unos segundos.',
+        centered: true,
+        backdrop: true,
+        duration: 5000,
+      });
+    },
+  });
+}
 
   onTarifaSeleccionada(t: Tarifa) {
     if (!t) return;
@@ -154,11 +174,10 @@ export class ProcesoReservaComponent {
   }
 
   onBicicletasSeleccionadas(bicis: Bicicleta[]) {
-    this.bicicletasSeleccionadas = bicis;
+    this.bicicletasSeleccionadas = [...bicis]; 
     this.accesoriosSeleccionados = [];
     this.cliente = undefined;
     this.cargarAccesorios(bicis);
-    this.pasoActual = 3; // Avanza al paso 3
   }
 
   cargarAccesorios(bicicletas: Bicicleta[]) {
@@ -221,9 +240,8 @@ export class ProcesoReservaComponent {
   }
 
   onAccesoriosSeleccionados(accesorios: AccesorioConCantidadUI[]) {
-    this.accesoriosSeleccionados = accesorios;
+    this.accesoriosSeleccionados = [...accesorios]; 
     this.cliente = undefined;
-    this.pasoActual = 4; // Avanza al paso 4
   }
 
   onClienteConfirmado(clienteData: Cliente) {
@@ -322,6 +340,42 @@ export class ProcesoReservaComponent {
     this.idiomaContrato = idioma;
   }
 
+  
+
+  // ===== NUEVO MÉTODO PARA NAVEGACIÓN =====
+  
+ irAlPaso(paso: number) {
+  // Validaciones existentes...
+  if (paso === 2 && (!this.fechaSeleccionada || !this.tarifaSeleccionada)) {
+    this.toast.open({
+      type: 'warning',
+      title: 'Paso incompleto',
+      message: 'Primero debes seleccionar fecha y tarifa.',
+      centered: true,
+      backdrop: true,
+      duration: 3000,
+    });
+    return;
+  }
+  
+  if (paso === 3 && this.bicicletasSeleccionadas.length === 0) {
+    this.toast.open({
+      type: 'warning',
+      title: 'Paso incompleto',
+      message: 'Debes seleccionar al menos una bicicleta.',
+      centered: true,
+      backdrop: true,
+      duration: 3000,
+    });
+    return;
+  }
+  
+  // ✅ No necesitas recargar nada, el getter se actualiza solo
+  this.pasoActual = paso;
+}
+
+  
+
 
   resetearFormulario() {
     this.fechaSeleccionada = undefined;
@@ -343,4 +397,41 @@ export class ProcesoReservaComponent {
  onToastAction() {
    window.location.href = 'https://www.bikerental.com.es/';
  }
+
+
+
+    /**
+     * Elimina una bicicleta de la selección.
+     * Si no quedan bicicletas, vuelve al paso 2.
+     */
+
+  onEliminarBicicleta(id: number) {
+    this.bicicletasSeleccionadas = this.bicicletasSeleccionadas.filter(
+      (bici: Bicicleta) => bici.id !== id
+    );
+
+    if (this.bicicletasSeleccionadas.length === 0) {
+      this.irAlPaso(2);
+      this.toast.open({
+        type: 'info',
+        title: 'No hay bicicletas seleccionadas',
+        message: 'Selecciona al menos una bicicleta para continuar.',
+        centered: true,
+        backdrop: true,
+        duration: 3000,
+      });
+    }
+  }
+
+  onEliminarAccesorio(id: number) {
+    this.accesoriosSeleccionados = this.accesoriosSeleccionados.filter(
+      (accesorio: AccesorioConCantidadUI) => accesorio.id !== id
+    );
+  }
+
+
+
+
+
 }
+

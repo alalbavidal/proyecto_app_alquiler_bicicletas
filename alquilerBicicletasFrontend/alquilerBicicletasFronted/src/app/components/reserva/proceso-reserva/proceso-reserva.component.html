@@ -1,78 +1,180 @@
 <div class="p-4 max-w-md mx-auto bg-gray-50 rounded-lg shadow-lg">
-
-
+  
+  <!-- ===== INDICADOR DE PROGRESO (Stepper) - Pendiente ===== -->
+  
+  <!-- ===== PASO 1: FECHA Y TARIFA ===== -->
+<div *ngIf="pasoActual === 1" class="step-container">
+  <h2 class="text-xl font-bold mb-4">📅 Paso 1: Elige tu fecha y tarifa</h2>
+  <p class="text-sm text-gray-600 mb-4">Selecciona el día que quieres alquilar y elige una tarifa.</p>
+  
   <app-calendario-reserva
     [diasNoDisponibles]="diasNoDisponibles"
     (fechaSeleccionada)="onFechaSeleccionada($event)"
   >
   </app-calendario-reserva>
 
-  <div *ngIf="fechaSeleccionada" class="mt-4 p-4 bg-white rounded shadow">
-    <h3 class="text-lg font-semibold">Fecha seleccionada:</h3>
-    <p>{{ fechaSeleccionada | date: 'fullDate' }}</p>
-
+  <!-- Mostrar tarifas solo si hay -->
+  <div *ngIf="fechaSeleccionada" class="mt-4">
+    <!-- Indicador de carga -->
+    <div *ngIf="tarifasDisponibles.length === 0 && fechaSeleccionada" class="text-center py-4 text-gray-500">
+      <i class="bi bi-hourglass-split animate-spin"></i> Cargando tarifas...
+    </div>
+    
     <!-- Selector de tarifa -->
     <app-selector-tarifa
       *ngIf="tarifasDisponibles.length > 0"
       [tarifas]="tarifasDisponibles"
-      (tarifaSeleccionadaChange)="onTarifaSeleccionada($event)">
+      (tarifaSeleccionadaChange)="onTarifaSeleccionada($event)"
+    >
     </app-selector-tarifa>
+  </div>
 
-    <!-- Selector de bicicletas: solo si están cargadas -->
-    <app-selector-bicicleta
-      *ngIf="bicicletasCargadas && bicicletasParaSelector.length > 0"
-      [bicicletas]="bicicletasParaSelector"
-      (bicicletasSeleccionadas)="onBicicletasSeleccionadas($event)">
-    </app-selector-bicicleta>
+  <!-- Botón siguiente (solo si hay fecha y tarifa seleccionada) -->
+  <div class="mt-6 flex justify-end">
+    <button
+      *ngIf="fechaSeleccionada && tarifaSeleccionada"
+      (click)="irAlPaso(2)"
+      class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+    >
+      Siguiente →
+    </button>
+  </div>
+</div>
 
-    <!-- Selector de accesorios: solo si están cargados -->
+  <!-- ===== PASO 2: BICICLETAS Y ACCESORIOS ===== -->
+<div *ngIf="pasoActual === 2" class="step-container">
+  <h2 class="text-xl font-bold mb-4">🚲 Paso 2: Elige tus bicicletas</h2>
+  <p class="text-sm text-gray-600 mb-4">Selecciona las bicicletas que quieres alquilar.</p>
+
+   <!-- ✅ USAR EL COMPONENTE, NO COPIAR SU HTML -->
+  <app-selector-bicicleta
+    *ngIf="bicicletasCargadas && bicicletasParaSelector.length > 0"
+    [bicicletas]="bicicletasParaSelector"
+    [seleccionadasIniciales]="bicicletasSeleccionadas"
+    (bicicletasSeleccionadas)="onBicicletasSeleccionadas($event)"
+  >
+  </app-selector-bicicleta>
+
+  
+  
+  
+  <!-- Selector de accesorios (opcional) -->
+  <div *ngIf="bicicletasSeleccionadas.length > 0" class="mt-6">
+    <h3 class="text-lg font-semibold mb-2">🔧 Accesorios (opcional)</h3>
     <app-selector-accesorio
       [accesorios]="accesoriosDisponibles"
       [maxCantidad]="bicicletasSeleccionadas.length"
       [maxPorAccesorio]="maxPorAccesorio"
-      (accesoriosSeleccionados)="onAccesoriosSeleccionados($event)">
+      (accesoriosSeleccionados)="onAccesoriosSeleccionados($event)"
+    >
     </app-selector-accesorio>
+  </div>
 
-    <!-- Cliente form -->
-    <div *ngIf="bicicletasSeleccionadas.length > 0">
-      <app-cliente-form (clienteConfirmado)="onClienteConfirmado($event)"></app-cliente-form>
-    </div>
+  <!-- Navegación -->
+  <div class="mt-6 flex justify-between">
+    <button
+      (click)="irAlPaso(1)"
+      class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+    >
+      ← Anterior
+    </button>
+    <button
+      (click)="irAlPaso(3)"
+      [disabled]="bicicletasSeleccionadas.length === 0"
+      class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      Ver resumen →
+    </button>
+  </div>
+</div>
 
-    <!-- NUEVO: Selector de idioma del contrato - solo cuando el cliente está confirmado -->
-    <div *ngIf="cliente" class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+  <!-- ===== PASO 3: RESUMEN Y PRECIO ===== -->
+<div *ngIf="pasoActual === 3" class="step-container">
+  <h2 class="text-xl font-bold mb-4">📊 Paso 3: Resumen de tu reserva</h2>
+  <p class="text-sm text-gray-600 mb-4">Revisa tu selección antes de continuar.</p>
+
+  <!-- ✅ Sin *ngIf de recarga, el getter se actualiza solo -->
+  <app-resumen-reserva
+    [fecha]="fechaSeleccionada"
+    [tarifa]="tarifaSeleccionada"
+    [bicicletas]="bicicletasSeleccionadas"
+    [accesorios]="accesoriosSeleccionados"
+    (eliminarBicicleta)="onEliminarBicicleta($event)"
+    (eliminarAccesorio)="onEliminarAccesorio($event)"
+  >
+  </app-resumen-reserva>
+
+  <!-- Navegación -->
+  <div class="mt-6 flex justify-between">
+    <button
+      (click)="irAlPaso(2)"
+      class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+    >
+      ← Anterior
+    </button>
+    <button
+      (click)="irAlPaso(4)"
+      class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+    >
+      Continuar con mis datos →
+    </button>
+  </div>
+</div>
+
+  <!-- ===== PASO 4: DATOS DEL CLIENTE Y CONFIRMACIÓN ===== -->
+  <div *ngIf="pasoActual === 4" class="step-container">
+    <h2 class="text-xl font-bold mb-4">📝 Paso 4: Tus datos</h2>
+    <p class="text-sm text-gray-600 mb-4">Completa tus datos para confirmar la reserva.</p>
+
+    <!-- Formulario de cliente -->
+    <app-cliente-form (clienteConfirmado)="onClienteConfirmado($event)">
+    </app-cliente-form>
+
+    <!-- Selector de idioma -->
+    <div *ngIf="cliente" class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
       <h3 class="text-lg font-semibold text-blue-800 mb-2">Idioma del contrato / Contract Language</h3>
       <div class="flex space-x-4">
         <button
           (click)="cambiarIdioma('es')"
           [class]="idiomaContrato === 'es'
             ? 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow'
-            : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'">
+            : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'"
+        >
           🇪🇸 Español
         </button>
         <button
           (click)="cambiarIdioma('en')"
           [class]="idiomaContrato === 'en'
             ? 'bg-blue-600 text-white px-4 py-2 rounded-lg font-medium shadow'
-            : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'">
+            : 'bg-white text-blue-600 border border-blue-300 px-4 py-2 rounded-lg font-medium hover:bg-blue-50'"
+        >
           🇬🇧 English
         </button>
       </div>
-      <p class="text-sm text-blue-600 mt-2">
-        {{ idiomaContrato === 'es'
-        ? 'El contrato y el email de confirmación se enviarán en el idioma seleccionado.'
-        : 'The contract and confirmation email will be sent in the selected language.' }}
-      </p>
     </div>
 
-    <!-- Resumen reserva, solo si cliente ya confirmó sus datos -->
-    <app-resumen-reserva
-      *ngIf="cliente"
-      [fecha]="fechaSeleccionada"
-      [tarifa]="tarifaSeleccionada"
-      [bicicletas]="bicicletasSeleccionadas"
-      [accesorios]="accesoriosSeleccionados"
-      (confirmarReserva)="onConfirmarReserva()">
-    </app-resumen-reserva>
+    <!-- Resumen final con confirmación -->
+    <div *ngIf="cliente" class="mt-4">
+      <app-resumen-reserva
+        [fecha]="fechaSeleccionada"
+        [tarifa]="tarifaSeleccionada"
+        [bicicletas]="bicicletasSeleccionadas"
+        [accesorios]="accesoriosSeleccionados"
+        (confirmarReserva)="onConfirmarReserva()"
+      >
+      </app-resumen-reserva>
+    </div>
+
+    <!-- Navegación -->
+    <div class="mt-6 flex justify-between">
+      <button
+        (click)="irAlPaso(3)"
+        class="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+      >
+        ← Anterior
+      </button>
+    </div>
   </div>
 </div>
+
 <app-toast #toast (action)="onToastAction()"></app-toast>
