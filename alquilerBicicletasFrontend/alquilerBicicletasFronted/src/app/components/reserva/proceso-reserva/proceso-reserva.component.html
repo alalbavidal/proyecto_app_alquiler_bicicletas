@@ -104,6 +104,27 @@
   >
   </app-resumen-reserva>
 
+ <!-- ✅ NUEVO: Mensaje para invitar a añadir accesorios -->
+  <div *ngIf="bicicletasSeleccionadas.length > 0 && accesoriosSeleccionados.length === 0" 
+       class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+    <div class="flex items-start gap-3">
+      <i class="bi bi-info-circle-fill text-blue-600 text-xl mt-0.5"></i>
+      <div>
+        <h4 class="font-semibold text-blue-800">¿Quieres añadir accesorios?</h4>
+        <p class="text-sm text-blue-700 mt-1">
+          Puedes añadir cascos, candados o luces para completar tu alquiler.
+        </p>
+        <button
+          (click)="irAlPaso(2)"
+          class="mt-2 bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+        >
+          Añadir accesorios →
+        </button>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Navegación -->
   <div class="mt-6 flex justify-between">
     <button
