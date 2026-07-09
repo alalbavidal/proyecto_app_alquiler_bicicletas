@@ -98,15 +98,15 @@ public class ContratoService {
             document.add(title);
 
             // --- EMPRESA ---
-            document.add(new Paragraph("BIKE RENTAL", subtitleFont));
-            document.add(new Paragraph("Taller de Bicicletas 1908 SL", normalFont));
-            document.add(new Paragraph("NIF - B91767558", normalFont));
+            document.add(new Paragraph("EN PEDALES", subtitleFont));
+            document.add(new Paragraph("EN Pedales SL", normalFont));
+            document.add(new Paragraph("NIF - B00000000", normalFont));
             String direccionLabel = esIngles ? "Address" : "Dirección";
-            document.add(new Paragraph(direccionLabel + ": Almirante Tenorio, 1, 41003 Sevilla", normalFont));
+            document.add(new Paragraph(direccionLabel + ": Avenida de la Innovación, 14, 41020 Sevilla", normalFont));
             String telefonoLabel = esIngles ? "Phone" : "Teléfono";
-            document.add(new Paragraph(telefonoLabel + ": +34 664 022 266", normalFont));
+            document.add(new Paragraph(telefonoLabel + ": +34 954 000 111", normalFont));
             String emailLabel = esIngles ? "Email" : "Email";
-            document.add(new Paragraph(emailLabel + ": i@bikerental.com.es", normalFont));
+            document.add(new Paragraph(emailLabel + ": contacto@alquilandopedales.es", normalFont));
             document.add(new Paragraph(" ", normalFont));
 
             // --- CLIENTE ---
@@ -158,33 +158,33 @@ public class ContratoService {
             document.add(tablaBicis);
 
             // --- ACCESORIOS ---
-        if (reserva.getAccesorios() != null && !reserva.getAccesorios().isEmpty()) {
-            String accesoriosAlquilados = esIngles ? "RENTED ACCESSORIES" : "ACCESORIOS ALQUILADOS";
-            document.add(new Paragraph(accesoriosAlquilados, subtitleFont));
-            PdfPTable tablaAccesorios = new PdfPTable(3);
-            tablaAccesorios.setWidthPercentage(100);
-            tablaAccesorios.setSpacingBefore(10f);
-            tablaAccesorios.setSpacingAfter(10f);
+            if (reserva.getAccesorios() != null && !reserva.getAccesorios().isEmpty()) {
+                String accesoriosAlquilados = esIngles ? "RENTED ACCESSORIES" : "ACCESORIOS ALQUILADOS";
+                document.add(new Paragraph(accesoriosAlquilados, subtitleFont));
+                PdfPTable tablaAccesorios = new PdfPTable(3);
+                tablaAccesorios.setWidthPercentage(100);
+                tablaAccesorios.setSpacingBefore(10f);
+                tablaAccesorios.setSpacingAfter(10f);
 
-            String accesorio = esIngles ? "Accessory" : "Accesorio";
-            String cantidad = esIngles ? "Quantity" : "Cantidad";
-            String precio = esIngles ? "Price" : "Precio";
-            tablaAccesorios.addCell(new PdfPCell(new Phrase(accesorio, boldFont)));
-            tablaAccesorios.addCell(new PdfPCell(new Phrase(cantidad, boldFont)));
-            tablaAccesorios.addCell(new PdfPCell(new Phrase(precio, boldFont)));
+                String accesorio = esIngles ? "Accessory" : "Accesorio";
+                String cantidad = esIngles ? "Quantity" : "Cantidad";
+                String precio = esIngles ? "Price" : "Precio";
+                tablaAccesorios.addCell(new PdfPCell(new Phrase(accesorio, boldFont)));
+                tablaAccesorios.addCell(new PdfPCell(new Phrase(cantidad, boldFont)));
+                tablaAccesorios.addCell(new PdfPCell(new Phrase(precio, boldFont)));
 
-            for (ReservaAccesorio ra : reserva.getAccesorios()) {
-                tablaAccesorios.addCell(new Phrase(ra.getAccesorio().getNombre(), normalFont));
-                tablaAccesorios.addCell(new Phrase(String.valueOf(ra.getCantidad()), normalFont));
-                tablaAccesorios.addCell(new Phrase(euros(ra.getPrecioTotal()), normalFont));
+                for (ReservaAccesorio ra : reserva.getAccesorios()) {
+                    tablaAccesorios.addCell(new Phrase(ra.getAccesorio().getNombre(), normalFont));
+                    tablaAccesorios.addCell(new Phrase(String.valueOf(ra.getCantidad()), normalFont));
+                    tablaAccesorios.addCell(new Phrase(euros(ra.getPrecioTotal()), normalFont));
+                }
+                document.add(tablaAccesorios);
             }
-            document.add(tablaAccesorios);
-        }
 
-           // --- RESUMEN ECONÓMICO ---
-        var extras = reserva.getExtrasTotal() == null ? BigDecimal.ZERO : reserva.getExtrasTotal();
-        var base = reserva.getPrecioTotal().subtract(extras);
-        
+            // --- RESUMEN ECONÓMICO ---
+            var extras = reserva.getExtrasTotal() == null ? BigDecimal.ZERO : reserva.getExtrasTotal();
+            var base = reserva.getPrecioTotal().subtract(extras);
+            
             // ✅ Calcular desglose del IVA (21%)
             BigDecimal ivaPorcentaje = new BigDecimal("0.21");
             BigDecimal subtotal = reserva.getPrecioTotal().divide(BigDecimal.ONE.add(ivaPorcentaje), 2, RoundingMode.HALF_UP);
@@ -218,33 +218,33 @@ public class ContratoService {
                 document.add(new Paragraph("2. Payment for the total contracted service will be made upon delivery of the bicycle.", normalFont));
                 document.add(new Paragraph("3. Upon delivery of the bicycle, the customer must leave a deposit and a copy of their identity document, or pre-authorize the charge on their credit card for the corresponding amount, in case damages to the bicycle or delivered material have to be charged, or in case of theft.", normalFont));
                 document.add(new Paragraph("4. Failure to comply with the delivery time will result in the extension of the rental for equivalent periods, at the contracted price.", normalFont));
-                document.add(new Paragraph("5. The return of the bicycle will be made at the address of Taller de Bicicletas, during business hours from 9 to 14 and from 17 to 21, Monday to Saturday, and from 9 to 14 on Saturdays. Check prices for out-of-hours collection.", normalFont));
+                document.add(new Paragraph("5. The return of the bicycle will be made at the address of En Pedales, during business hours from 9 to 14 and from 17 to 21, Monday to Saturday, and from 9 to 14 on Saturdays. Check prices for out-of-hours collection.", normalFont));
                 document.add(new Paragraph("6. The bicycle is delivered in perfect working condition and with the following accessories: U-lock, front and rear lights. In addition to the accessories indicated in the \"Service\" table.", normalFont));
                 document.add(new Paragraph("7. In case of theft, the lessee is responsible and must file a report with the Police and present it at our establishment. Likewise, they must pay the RRP of the stolen bicycle, which amounts to 399 €. A penalty of 15 € is established for loss of the lock key.", normalFont));
                 document.add(new Paragraph("8. The lessor is not responsible for claims for accidents, injuries, blows or damages caused to themselves and/or third parties or their property, or for loss of objects during the rental period.", normalFont));
                 document.add(new Paragraph("9. It is the responsibility of the lessee to respect Spanish traffic rules and drive with care and respect for pedestrians. It is forbidden to carry adult passengers on the bicycle. Fines for driving or parking are the responsibility of the lessee.", normalFont));
                 document.add(new Paragraph("10. This agreement is governed by Spanish law.", normalFont));
-                document.add(new Paragraph("11. Cancellation link: https://bikerental.com/cancelar/" + reserva.getCancelToken(), normalFont));
+                document.add(new Paragraph("11. Cancellation link: https://alquilandopedales.es/cancelar/" + reserva.getCancelToken(), normalFont));
             } else {
                 document.add(new Paragraph("1. El arrendatario debe ser mayor de 18 años y poseer Documento Nacional de Identidad para miembros de la Unión Europea y Pasaporte para el resto de países. Así mismo, declara estar en perfectas condiciones de salud, ser capaz de manejar una bicicleta y poseer el control necesario del equipamiento alquilado.", normalFont));
                 document.add(new Paragraph("2. A la entrega de la bicicleta se efectuará el pago del total del servicio contratado.", normalFont));
                 document.add(new Paragraph("3. A la entrega de la bicicleta el cliente deberá dejar en depósito una fianza y copia de su documento de identidad, o bien preautorizar el cargo en su tarjeta de crédito del importe correspondiente, para el caso de que tengan que cargarse daños causados a la bicicleta o al material entregado, o en caso de robo.", normalFont));
                 document.add(new Paragraph("4. El incumplimiento de la hora de entrega supondrá la prórroga del alquiler por periodos equivalentes, al precio contratado.", normalFont));
-                document.add(new Paragraph("5. La devolución de la bicicleta se realizará en el domicilio de Taller de Bicicletas, en horario comercial de 9 a 14 h y de 17 a 21 h, de lunes a sábado, y de 9 a 14 los sábados. Consultar precios para recogida fuera de horario.", normalFont));
+                document.add(new Paragraph("5. La devolución de la bicicleta se realizará en el domicilio de En Pedales, en horario comercial de 9 a 14 h y de 17 a 21 h, de lunes a sábado, y de 9 a 14 los sábados. Consultar precios para recogida fuera de horario.", normalFont));
                 document.add(new Paragraph("6. La bicicleta se entrega en perfecto estado de funcionamiento y con los siguientes accesorios: candado tipo \"U\", luces delanteras y traseras. Además de los accesorios indicados en el cuadro de \"Servicio\".", normalFont));
                 document.add(new Paragraph("7. En caso de robo el arrendatario es el responsable del mismo y deberá interponer una denuncia en la Policía y presentarla en nuestro establecimiento. Así mismo, deberá abonar el PVP de la bicicleta robada, que asciende a 399 €. Se establece una penalización por pérdida de la llave del candado de 15 €.", normalFont));
                 document.add(new Paragraph("8. El arrendador no se hace responsable de reclamaciones por accidentes, heridas, golpes o daños ocasionados a sí mismos y/o a terceras personas o a su propiedad, o por pérdida de objetos durante el periodo del alquiler.", normalFont));
                 document.add(new Paragraph("9. Es responsabilidad del arrendatario respetar las normas de tráfico españolas y conducir con cuidado y respeto a los peatones. Está prohibido llevar pasajeros adultos en la bicicleta. Las multas por conducción o aparcamiento son de cuenta del arrendatario.", normalFont));
                 document.add(new Paragraph("10. Este contrato se rige por la ley española.", normalFont));
-                document.add(new Paragraph("11. Enlace para cancelación: https://bikerental.com/cancelar/" + reserva.getCancelToken(), normalFont));
+                document.add(new Paragraph("11. Enlace para cancelación: https://alquilandopedales.es/cancelar/" + reserva.getCancelToken(), normalFont));
             }
             document.add(new Paragraph(" ", normalFont));
 
             // Protección de datos
             if (esIngles) {
-                document.add(new Paragraph("DATA PROTECTION: In accordance with the provisions of Regulation (EU) 2016/679 of April 27 (GDPR) and Organic Law 3/2018 of December 5 (LOPDGDD), we inform you that the personal data and email address of the interested party will be processed under the responsibility of Taller de Bicicletas 1908 SL for a legitimate interest and for sending communications about our products and services and will be kept as long as neither party objects. The data will not be communicated to third parties, except legal obligation. We inform you that you can exercise the rights of access, rectification, portability and deletion of your data and those of limitation and opposition to its processing by contacting Virgen de los Gitanos 4 Acc., 41003 – Sevilla, Spain. Email: cfo@tallerdebicicletas.com. If you consider that the processing does not comply with current regulations, you can file a claim with the control authority at www.aepd.es.", normalFont));
+                document.add(new Paragraph("DATA PROTECTION: In accordance with the provisions of Regulation (EU) 2016/679 of April 27 (GDPR) and Organic Law 3/2018 of December 5 (LOPDGDD), we inform you that the personal data and email address of the interested party will be processed under the responsibility of En Pedales SL for a legitimate interest and for sending communications about our products and services and will be kept as long as neither party objects. The data will not be communicated to third parties, except legal obligation. We inform you that you can exercise the rights of access, rectification, portability and deletion of your data and those of limitation and opposition to its processing by contacting Avenida de la Innovación 14, 41020 – Sevilla, Spain. Email: rgpd@alquilandopedales.es. If you consider that the processing does not comply with current regulations, you can file a claim with the control authority at www.aepd.es.", normalFont));
             } else {
-                document.add(new Paragraph("PROTECCIÓN DE DATOS: De conformidad con lo dispuesto en el Reglamento (UE) 2016/679 de 27 de abril (GDPR) y la Ley Orgánica 3/2018 de 5 de diciembre (LOPDGDD), le informamos que los datos personales y dirección de correo electrónico del interesado, serán tratados bajo la responsabilidad de Taller de Bicicletas 1908 SL por un interés legítimo y para el envío de comunicaciones sobre nuestros productos y servicios y se conservarán mientras ninguna de las partes se oponga a ello. Los datos no serán comunicados a terceros, salvo obligación legal. Le informamos que puede ejercer los derechos de acceso, rectificación, portabilidad y supresión de sus datos y los de limitación y oposición a su tratamiento dirigiéndose a Virgen de los Gitanos 4 Acc., 41003 – Sevilla, España. Email: cfo@tallerdebicicletas.com. Si considera que el tratamiento no se ajusta a la normativa vigente, podrá presentar una reclamación ante la autoridad de control en www.aepd.es.", normalFont));
+                document.add(new Paragraph("PROTECCIÓN DE DATOS: De conformidad con lo dispuesto en el Reglamento (UE) 2016/679 de 27 de abril (GDPR) y la Ley Orgánica 3/2018 de 5 de diciembre (LOPDGDD), le informamos que los datos personales y dirección de correo electrónico del interesado, serán tratados bajo la responsabilidad de En Pedales SL por un interés legítimo y para el envío de comunicaciones sobre nuestros productos y servicios y se conservarán mientras ninguna de las partes se oponga a ello. Los datos no serán comunicados a terceros, salvo obligación legal. Le informamos que puede ejercer los derechos de acceso, rectificación, portabilidad y supresión de sus datos y los de limitación y oposición a su tratamiento dirigiéndose a Avenida de la Innovación 14, 41020 – Sevilla, España. Email: rgpd@alquilandopedales.es. Si considera que el tratamiento no se ajusta a la normativa vigente, podrá presentar una reclamación ante la autoridad de control en www.aepd.es.", normalFont));
             }
             document.add(new Paragraph(" ", normalFont));
 
@@ -270,7 +270,7 @@ public class ContratoService {
             document.add(new Paragraph(" ", normalFont));
             document.add(new Paragraph(" ________________________                                    ________________________", normalFont));
 
-            String firmaEmpresa = esIngles ? "Signed: Bike Rental / Taller de Bicicletas" : "Firmado: Bike Rental / Taller de Bicicletas";
+            String firmaEmpresa = esIngles ? "Signed: En Pedales" : "Firmado: En Pedales";
             String firmaCliente = esIngles ? "Signed: The customer / lessee" : "Firmado: El cliente / arrendatario";
             document.add(new Paragraph(" " + firmaEmpresa + "                      " + firmaCliente, normalFont));
 
