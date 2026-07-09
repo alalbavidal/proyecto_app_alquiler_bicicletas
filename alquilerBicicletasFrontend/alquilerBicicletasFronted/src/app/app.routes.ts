@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
 import { ProcesoReservaComponent } from './components/reserva/proceso-reserva/proceso-reserva.component';
 
+import { HomeComponent } from './components/home/home.component';
+
 export const routes: Routes = [
-  // 👉 RUTA INICIAL REAL DE TU APP
-  { path: '', redirectTo: 'calendario', pathMatch: 'full' },
+  // RUTA INICIAL 
+  { path: '', component: HomeComponent },
 
   { path: 'calendario', component: ProcesoReservaComponent },
 
@@ -20,4 +22,8 @@ export const routes: Routes = [
 
   // 👉 fallback correcto
   { path: '**', redirectTo: 'calendario' }
+
+
+
+  
 ];

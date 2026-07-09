@@ -1,0 +1,12 @@
+[build]
+  base = "alquilerBicicletasFrontend/alquilerBicicletasFronted"
+  command = "npm run build"
+  publish = "dist/alquiler-bicicletas-fronted"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/api/*"
+  to = "http://localhost:8085/api/:splat"
+  status = 200
