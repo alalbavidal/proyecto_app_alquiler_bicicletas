@@ -1,5 +1,5 @@
 [build]
-  base = "alquilerBicicletasFrontend"  # ← Cambia esto
+  base = "alquilerBicicletasFrontend" 
   command = "npm run build"
   publish = "dist/alquiler-bicicletas-fronted"
 
